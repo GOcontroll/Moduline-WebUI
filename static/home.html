@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>GOcontroll home</title>
+    <meta charset="UTF-8">
+	<script src="../js/jquery.js"></script>
+	<script src="../js/home.js"></script>
+  </head>
+  <body>
+    <h1>Home</h1>
+	<p>Simulink Model version:</p>
+	<p id="simulink_version">...</p>
+	<form action="/api/download_a2l" method="get">
+		<input type="submit" name="download" value="Download a2l"/>
+	</form>
+	<form action="/logout" method="post">
+		<input type="submit" name="logout" value="Logout"/>
+  </form>
+  </body>
+</html>
