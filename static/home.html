@@ -5,11 +5,23 @@
     <meta charset="UTF-8">
 	<script src="../js/jquery.js"></script>
 	<script src="../js/home.js"></script>
+	<link rel="stylesheet" href="../style/main.css">
   </head>
   <body>
     <h1>Home</h1>
 	<p>Simulink Model version:</p>
 	<p id="simulink_version">...</p>
+	<p>Wifi State:</p>
+	<label class="switch">
+		<input id="wifi" type="checkbox" onclick="set_wifi()">
+		<span class="slider round"></span>
+	</label>
+	<p>
+		New Access Point password:
+		<input id="ap_pass" type="password"/>
+	</p>
+	<button onclick="set_ap_pass()">Change password</button>
+	<p id="set_ap_pass_result"></p>
 	<form action="/api/download_a2l" method="get">
 		<input type="submit" name="download" value="Download a2l"/>
 	</form>

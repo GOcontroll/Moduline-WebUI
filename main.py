@@ -1,6 +1,8 @@
 from microdot import Microdot, Response, redirect, send_file
 from microdot.session import Session, with_session
 from functools import wraps
+import wifi
+import subprocess
 import random
 import string
 import os
@@ -22,7 +24,7 @@ LOGGED_OUT = '''<p>You are not logged in.</p>
 <form method="POST">
   <p>
     Passkey:
-    <input name="passkey" autofocus />
+    <input type="password" name="passkey" autofocus />
   </p>
   <input type="submit" value="Submit" />
 </form>'''
@@ -31,14 +33,11 @@ FAILED_LOGIN = '''<p>You are not logged in.</p>
 <form method="POST">
   <p>
     Passkey:
-    <input name="passkey" autofocus />
+    <input type="password" name="passkey" autofocus />
   </p>
   <input type="submit" value="Submit" />
   <p>Incorrect passkey entered</p>
 </form>'''
-
-NO_LOGIN = '''<p>You have tried to log in too many times and can't try again.</p>
-'''
 
 def authenticate_token(token:str) -> bool:
 	try:
@@ -65,8 +64,13 @@ def auth(func):
 	return wrapper
 
 app = Microdot()
-Session(app, secret_key='top-secret')
+Session(app, secret_key=''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))) #generate new session key when the server is restarted
 Response.default_content_type = 'text/html'
+
+#########################################################################################################
+#routes
+
+#login
 
 @app.get('/')
 @app.post('/')
@@ -76,15 +80,15 @@ async def index(req, session):
 	if req.method == 'POST':
 		passkey = req.form.get('passkey')
 		if passkey == "test":
-			token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
+			token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10)) #generate new token for every new authorized session
 			session['token'] = token
 			register_token(token)
 			session.save()
 			return redirect('/static/home.html')
 		else:
-			return BASE_TEMPLATE.format(content=FAILED_LOGIN)
+			return json.dumps(False)
 	if token is None or not authenticate_token(token):
-		return BASE_TEMPLATE.format(content=LOGGED_OUT)
+		return send_file('login.html')
 	elif authenticate_token(token):
 		return redirect('/static/home.html')
 
@@ -95,6 +99,10 @@ async def logout(req, session):
 	remove_token(session.get('token'))
 	session.delete()
 	return redirect('/')
+
+#########################################################################################################
+
+#file hosting
 
 @app.route('/static/<path:path>')
 @with_session
@@ -120,6 +128,12 @@ async def js(request, path):
 async def favicon(request):
 	return send_file('favicon.ico')
 
+#########################################################################################################
+
+#api
+
+#simulink
+
 @app.get('/api/get_sim_ver')
 @with_session
 @auth
@@ -130,18 +144,78 @@ async def sim_ver(request, session):
 		return json.dumps(head.split(' ')[1])
 	except:
 		return json.dumps("No changelog found")
-
+	
 @app.get('/api/download_a2l')
 @with_session
 @auth
 async def a2l_down(request,session):
 	return send_file('/usr/simulink/GOcontroll_Linux.a2l')
 
+#wifi
+
 @app.get('/api/get_wifi')
 @with_session
 @auth
 async def get_wifi(request, session):
 	return json.dumps(not os.path.isfile('/etc/modprobe.d/brcmfmac.conf'))
+
+
+
+@app.post('/api/set_wifi')
+@with_session
+@auth
+async def set_wifi(request, session):
+	"""Set the wifi state, request contains a json boolean value\n
+	Returns the state of wifi after this function is finished"""
+	new_state: bool = request.json
+	if set_wifi(new_state):
+		return json.dumps(new_state)
+	else:
+		return not json.dumps(new_state)
+	
+@app.post('/api/set_ap_pass')
+@with_session
+@auth
+async def set_ap_pass(request, session):
+	new_password: string = request.json
+	wifi.set_ap_password(new_password)
+	wifi.reload_ap()
+	return Response("\"\"")
+
+@app.post('/api/set_ap_ssid')
+@with_session
+@auth
+async def set_ap_ssid(request, session):
+	new_ssid: string = request.form.get('ssid')
+	wifi.set_ap_ssid(new_ssid)
+	wifi.reload_ap()
+	return Response("\"\"")
+
+#services
+
+@app.get('/api/get_service')
+@with_session
+@auth
+async def get_ssh(request, session):
+	service: string = request.json
+	return json.dumps(not bool(subprocess.run(["systemctl", "status", service]).returncode))
+
+@app.post("/api/set_service")
+@with_session
+@auth
+async def set_ssh(request, session):
+	data = request.json
+	new_state: bool = data["new_state"]
+	service: string = data["service"]
+	if new_state:
+		subprocess.run(["systemctl", "enable", service])
+		subprocess.run(["systemctl", "start", service])
+	else:
+		subprocess.run(["systemctl", "disable", service])
+		subprocess.run(["systemctl", "stop", service])
+	return json.dumps(new_state)
+
+#########################################################################################################
 
 if __name__ == '__main__':
 	tokens = []
