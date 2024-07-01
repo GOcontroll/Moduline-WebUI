@@ -1,5 +1,6 @@
 import subprocess
 import os
+import netifaces as ni
 
 def set_wifi(state: bool):
 	"""Set the state of the wifi receiver, true=on, false=off"""
@@ -111,3 +112,9 @@ def connect_to_wifi_network(ssid: str, password: str) -> bool:
 	if result.stdout.find("Error:"):
 		return False
 	return True
+
+def get_wifi_ip() -> str:
+	try:
+		return ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
+	except:
+		return "no IP available"
