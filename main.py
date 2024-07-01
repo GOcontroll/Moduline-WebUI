@@ -177,7 +177,7 @@ async def set_wifi(request, session):
 @with_session
 @auth
 async def set_ap_pass(request, session):
-	new_password: string = request.json
+	new_password: str = request.json
 	wifi.set_ap_password(new_password)
 	wifi.reload_ap()
 	return Response("\"\"")
@@ -186,7 +186,7 @@ async def set_ap_pass(request, session):
 @with_session
 @auth
 async def set_ap_ssid(request, session):
-	new_ssid: string = request.form.get('ssid')
+	new_ssid: str = request.form.get('ssid')
 	wifi.set_ap_ssid(new_ssid)
 	wifi.reload_ap()
 	return Response("\"\"")
@@ -197,7 +197,7 @@ async def set_ap_ssid(request, session):
 @with_session
 @auth
 async def get_ssh(request, session):
-	service: string = request.json
+	service: str = request.json
 	return json.dumps(not bool(subprocess.run(["systemctl", "status", service]).returncode))
 
 @app.post("/api/set_service")
@@ -206,7 +206,7 @@ async def get_ssh(request, session):
 async def set_ssh(request, session):
 	data = request.json
 	new_state: bool = data["new_state"]
-	service: string = data["service"]
+	service: str = data["service"]
 	if new_state:
 		subprocess.run(["systemctl", "enable", service])
 		subprocess.run(["systemctl", "start", service])
