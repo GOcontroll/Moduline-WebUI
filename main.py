@@ -1,12 +1,13 @@
-from microdot import Microdot, Response, redirect, send_file
+from microdot import Microdot, Response, Request, redirect, send_file
 from microdot.session import Session, with_session
 from functools import wraps
-import wifi
-import subprocess
 import random
 import string
 import os
 import json
+import wifi
+import controller
+import ethernet
 
 BASE_TEMPLATE = '''<!doctype html>
 <html>
@@ -57,7 +58,7 @@ def remove_token(token:str):
 
 def auth(func):
 	@wraps(func)
-	async def wrapper(req, session, *args, **kwargs):
+	async def wrapper(req: Request, session: Session, *args, **kwargs):
 		if not authenticate_token(session.get('token')):
 			return redirect('/')
 		return await func(req, session, *args, **kwargs)
@@ -75,7 +76,7 @@ Response.default_content_type = 'text/html'
 @app.get('/')
 @app.post('/')
 @with_session
-async def index(req, session):
+async def index(req: Request, session: Session):
 	token = session.get('token')
 	if req.method == 'POST':
 		passkey = req.form.get('passkey')
@@ -95,7 +96,7 @@ async def index(req, session):
 
 @app.post('/logout')
 @with_session
-async def logout(req, session):
+async def logout(req: Request, session: Session):
 	remove_token(session.get('token'))
 	session.delete()
 	return redirect('/')
@@ -107,25 +108,25 @@ async def logout(req, session):
 @app.route('/static/<path:path>')
 @with_session
 @auth
-async def static(request, session, path):
+async def static(req: Request, session: Session, path: str):
 	if '..' in path:
 		return 'Not allowed', 404
 	return send_file('static/' + path)
 
 @app.route('/style/<path:path>')
-async def style(request, path):
+async def style(req: Request, path):
 	if '..' in path:
 		return 'Not allowed', 404
 	return send_file('style/' + path)
 
 @app.route('/js/<path:path>')
-async def js(request, path):
+async def js(request: Request, path):
 	if '..' in path:
 		return 'Not allowed', 404
 	return send_file('js/' + path)
 
 @app.get('/favicon.ico')
-async def favicon(request):
+async def favicon(request: Request):
 	return send_file('favicon.ico')
 
 #########################################################################################################
@@ -137,18 +138,13 @@ async def favicon(request):
 @app.get('/api/get_sim_ver')
 @with_session
 @auth
-async def sim_ver(request, session):
-	try:
-		with open('/usr/simulink/CHANGELOG.md', 'r') as changelog:
-			head = changelog.readline()
-		return json.dumps(head.split(' ')[1])
-	except:
-		return json.dumps("No changelog found")
+async def sim_ver(req: Request, session: Session):
+	return json.dumps(controller.get_sim_ver())
 	
 @app.get('/api/download_a2l')
 @with_session
 @auth
-async def a2l_down(request,session):
+async def a2l_down(req: Request, session: Session):
 	return send_file('/usr/simulink/GOcontroll_Linux.a2l')
 
 #wifi
@@ -156,7 +152,7 @@ async def a2l_down(request,session):
 @app.get('/api/get_wifi')
 @with_session
 @auth
-async def get_wifi(request, session):
+async def get_wifi(req: Request, session: Session):
 	return json.dumps(not os.path.isfile('/etc/modprobe.d/brcmfmac.conf'))
 
 
@@ -164,10 +160,10 @@ async def get_wifi(request, session):
 @app.post('/api/set_wifi')
 @with_session
 @auth
-async def set_wifi(request, session):
+async def set_wifi(req: Request, session: Session):
 	"""Set the wifi state, request contains a json boolean value\n
 	Returns the state of wifi after this function is finished"""
-	new_state: bool = request.json
+	new_state: bool = req.json
 	if set_wifi(new_state):
 		return json.dumps(new_state)
 	else:
@@ -176,8 +172,8 @@ async def set_wifi(request, session):
 @app.post('/api/set_ap_pass')
 @with_session
 @auth
-async def set_ap_pass(request, session):
-	new_password: str = request.json
+async def set_ap_pass(req: Request, session: Session):
+	new_password: str = req.json
 	wifi.set_ap_password(new_password)
 	wifi.reload_ap()
 	return Response("\"\"")
@@ -185,8 +181,8 @@ async def set_ap_pass(request, session):
 @app.post('/api/set_ap_ssid')
 @with_session
 @auth
-async def set_ap_ssid(request, session):
-	new_ssid: str = request.form.get('ssid')
+async def set_ap_ssid(req: Request, session: Session):
+	new_ssid: str = req.form.get('ssid')
 	wifi.set_ap_ssid(new_ssid)
 	wifi.reload_ap()
 	return Response("\"\"")
@@ -196,23 +192,18 @@ async def set_ap_ssid(request, session):
 @app.get('/api/get_service')
 @with_session
 @auth
-async def get_ssh(request, session):
-	service: str = request.json
-	return json.dumps(not bool(subprocess.run(["systemctl", "status", service]).returncode))
+async def get_service(req: Request, session: Session):
+	service: str = req.json
+	return json.dumps(controller.get_service(service))
 
 @app.post("/api/set_service")
 @with_session
 @auth
-async def set_ssh(request, session):
-	data = request.json
+async def set_service(req: Request, session: Session):
+	data = req.json
 	new_state: bool = data["new_state"]
 	service: str = data["service"]
-	if new_state:
-		subprocess.run(["systemctl", "enable", service])
-		subprocess.run(["systemctl", "start", service])
-	else:
-		subprocess.run(["systemctl", "disable", service])
-		subprocess.run(["systemctl", "stop", service])
+	controller.set_service(service, new_state)
 	return json.dumps(new_state)
 
 #########################################################################################################
