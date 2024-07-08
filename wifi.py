@@ -2,7 +2,7 @@ import subprocess
 import os
 import netifaces as ni
 
-def set_wifi(state: bool):
+def set_wifi(state: bool) -> dict:
 	"""Set the state of the wifi receiver, true=on, false=off"""
 	try:
 		if (state):
@@ -12,11 +12,11 @@ def set_wifi(state: bool):
 			with open("/etc/modbprobe.d/brcmfmac.conf", "x") as file:
 				file.write("blacklist brcmfmac")
 			subprocess.run(["modprobe", "-r", "brcmfmac"])
-		return True
+		return {"state": state}
 	except:
-		return False
+		return { "err": f"could not switch state to {state}"}
 	
-def set_wifi_type(type: str):
+def set_wifi_type(type: str) -> dict:
 	"""Set the type that the wifi receiver should act as, 'ap'=access point 'wifi'=receiver"""
 	#to make the switch permanent all wifi connections need to have their autoconnect settings altered
 	#so all wifi connections need to be gathered
@@ -32,12 +32,27 @@ def set_wifi_type(type: str):
 			subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "no"])
 		subprocess.run(["nmcli", "con", "mod", "GOcontroll-AP", "connection.autoconnect", "yes"])
 		subprocess.run(["nmcli", "con", "up", "GOcontroll-AP"])
-
+		return {"type": "ap"}
 	elif type == "wifi":
 		for con in wifi_connections:
 			subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "yes"])
 		subprocess.run(["nmcli", "con", "mod", "GOcontroll-AP", "connection.autoconnect", "no"])
 		subprocess.run(["nmcli", "con", "down", "GOcontroll-AP"])
+		return {"type": "wifi"}
+	else:
+		return {"err": "Invalid type given, must be 'ap' or 'wifi'"}
+
+def get_wifi_type() -> dict:
+	output = subprocess.run(["nmcli", "-t", "con", "show", "GOcontroll-AP"], stdout=subprocess.PIPE, text=True)
+	option = "connection.autoconnect:"
+	idx = output.stdout.find(option)
+	if idx >= 0:
+		if output.stdout[idx + len(option)] == "y":
+			return {"type": "ap"}
+		else:
+			return {"type": "wifi"}
+	else:
+		return {"err": "Could not determine current wifi type"}
 
 def reload_ap():
 	"""Reload the access point after changes have been made for example"""
@@ -106,15 +121,17 @@ def get_wifi_networks() -> dict:
 			}
 	return networks_out
 
-def connect_to_wifi_network(ssid: str, password: str) -> bool:
+def connect_to_wifi_network(ssid: str, password: str) -> dict:
 	"""Try to connect to the wifi network with the given arguments"""
 	result = subprocess.run(["nmcli", "dev", "wifi", "connect", ssid, "password", password], stdout=subprocess.PIPE, text=True)
-	if result.stdout.find("Error:"):
-		return False
-	return True
+	search_str = "Error:"
+	idx = result.stdout.find(search_str)
+	if idx >= 0:
+		return {"err": f"{result.stdout[len(search_str):].strip()}"}
+	return {}
 
-def get_wifi_ip() -> str:
+def get_wifi_ip() -> dict:
 	try:
-		return ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
+		return {"ip": ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]}
 	except:
-		return "no IP available"
+		return {"err": "no IP available"}
