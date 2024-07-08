@@ -14,13 +14,13 @@ def set_service(service: str, new_state: bool):
 		subprocess.run(["systemctl", "disable", service])
 		subprocess.run(["systemctl", "stop", service])
 
-def get_sim_ver() -> str:
+def get_sim_ver() -> dict:
 	try:
 		with open('/usr/simulink/CHANGELOG.md', 'r') as changelog:
 			head = changelog.readline()
-		return head.split(' ')[1]
+		return {"version": head.split(' ')[1]}
 	except:
-		return "No changelog found"
+		return {"err": "No changelog found"}
 	
 def get_bt_name() -> str:
 	pass
@@ -28,23 +28,33 @@ def get_bt_name() -> str:
 def set_bt_name(name: str):
 	pass
 
-def get_hardware() -> str:
+def get_hardware() -> dict:
 	try:
 		with open("/sys/firmware/devicetree/base/hardware", "r") as hardware_file:
-			return hardware_file.read()
+			return {"hardware": hardware_file.read()}
 	except:
-		return "No hardware description found"
+		return {"err": "No hardware description found"}
 
-def get_software() -> str:
+def get_software() -> dict:
 	try:
 		with open("/version.txt", "r") as file:
-			return file.readline()
+			return {"version": file.readline()}
 	except:
 		try:
 			with open("/root/version.txt", "r") as file:
-				return file.readline()
+				return {"version": file.readline()}
 		except:
-			return "No version file found"
+			return {"err":"No version file found"}
+		
+def get_serial_number() -> dict:
+	try:
+		res = subprocess.run(["go-sn", "r"], stdout=subprocess.PIPE, text=True)
+		if res.returncode:
+			return {"err": "Could not get the serial number"}
+		else:
+			return {"sn": res.stdout.strip()}
+	except:
+		return {"err": "Could not get the serial number"}
 
 def get_errors() -> dict:
 	try:
@@ -62,4 +72,3 @@ def delete_errors(errors: "list[str]"):
 	for file in errors:
 		severity = file[0]
 		os.remove(f"/usr/mem-diag/{severity}/{file}")
-	pass
