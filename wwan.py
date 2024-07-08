@@ -8,7 +8,7 @@ def get_wwan() -> bool:
 def set_wwan(new_state: bool):
 	controller.set_service("go-wwan", new_state)
 
-def get_sim_num() -> str:
+def get_sim_num() -> dict:
 	pass
 
 def get_wwan_stats() -> dict:
@@ -25,14 +25,14 @@ def get_wwan_stats() -> dict:
 		stats["signal"] = mmcli["modem"]["generic"]["signal-quality"]["value"]
 		return stats
 	except:
-		return "Error: Could not get wwan information"
+		return {"err": "Could not get wwan information"}
 
 
-def get_apn() -> str:
+def get_apn() -> dict:
 	pass
 
-def set_apn(apn: str):
+def set_apn(apn: dict):
 	pass
 
-def set_pin(pin: str):
+def set_pin(pin: dict):
 	pass
