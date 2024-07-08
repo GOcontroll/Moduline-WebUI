@@ -1,19 +1,48 @@
 <!doctype html>
 <html>
   <head>
-    <title>GOcontroll</title>
+    <title>Log in</title>
     <meta charset="UTF-8">
+	<link rel="stylesheet" href="/style/login.css">
   </head>
   <body>
-    <h1>GOcontroll login</h1>
-    <p>You are not logged in.</p>
-	<form method="POST">
-		<p>
-			Passkey:
-			<input type="password" name="passkey" autofocus />
-		</p>
-		<input type="submit" value="Submit" />
-	</form>
+	<div style='display:flex; flex-direction:row; justify-content:center; height: 100%; overflow:auto'>
+	<div style='display:flex; flex-direction:column; justify-content:center'>
+		<a href='https://gocontroll.com'>
+			<div style='display:flex; flex-direction:row; justify-content:center'>
+				<img src='/assets/GOcontroll_logo_nontransparent.jpg' alt='GOcontroll logo' style='max-width:50%; padding-bottom:50px'/>
+			</div>
+		</a>
+		<div style='display:flex; flex-direction:row; justify-content:center'>
+			<div style='background:gray; padding:20px; display:flex; flex-direction: column; justify-content:space-evenly'>
+				<div style='display:flex; flex-direction:row; justify-content:center'>
+					<h1>Log in</h1>
+				</div>
+				<form method='post'>
+				<div style='display:flex; flex-direction:row; justify-content:space-between'>
+					<label for='passkey' style='padding-right:10px'>Passkey</label>
+					<input type='password' id='passkey' name='passkey' value='test' autofocus>
+				</div>
+				<br>
+				<div style='display:flex; flex-direction:row; justify-content:center'>
+					<input type='submit' value='log in'>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
   </body>
 </html>
 
+
+
+<!-- <h1>GOcontroll login</h1>
+<p>You are not logged in.</p>
+<form method="POST">
+	<p>
+		Passkey:
+		<input type="password" name="passkey" autofocus />
+	</p>
+	<input type="submit" value="Submit" />
+</form> -->

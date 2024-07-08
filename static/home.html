@@ -3,12 +3,18 @@
   <head>
     <title>GOcontroll home</title>
     <meta charset="UTF-8">
-	<script src="../js/jquery.js"></script>
-	<script src="../js/home.js"></script>
-	<link rel="stylesheet" href="../style/main.css">
+	<script src="/js/jquery.js"></script>
+	<script src="/js/home.js"></script>
+	<link rel="stylesheet" href="/style/main.css">
   </head>
   <body>
     <h1>Home</h1>
+	<p>Serial number:</p>
+	<p id="serial_number">...</p>
+	<p>Controller hardware:</p>
+	<p id="controller_hardware">...</p>
+	<p>Controller software:</p>
+	<p id="controller_software">...</p>
 	<p>Simulink Model version:</p>
 	<p id="simulink_version">...</p>
 	<p>Wifi State:</p>
@@ -22,7 +28,7 @@
 	</p>
 	<button onclick="set_ap_pass()">Change password</button>
 	<p id="set_ap_pass_result"></p>
-	<form action="/api/download_a2l" method="get">
+	<form action="/api/GOcontroll_Linux.a2l" method="get">
 		<input type="submit" name="download" value="Download a2l"/>
 	</form>
 	<form action="/logout" method="post">
