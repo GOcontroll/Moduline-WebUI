@@ -1,8 +1,9 @@
 .switch {
-  position: relative;
+  position:relative;
   display: inline-block;
   width: 60px;
   height: 34px;
+  align-content: end;
 }
 
 /* Hide default HTML checkbox */
@@ -60,6 +61,43 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  right: 105%;
+  top: -5px;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.topnav {
+	display: flex;
+	flex-direction: row;
+	background: gray;
+}
+
+.center-vert {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
 body {
 	background-color: white;
+	font-family: sans-serif;
 }
