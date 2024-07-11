@@ -1,0 +1,7 @@
+.service {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 300px;
+	margin-left: 10px;
+}

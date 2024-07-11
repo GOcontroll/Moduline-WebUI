@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    <title>GOcontroll services</title>
+    <meta charset="UTF-8">
+	<script src="/js/jquery.js"></script>
+	<script src="/js/common.js"></script>
+	<script src="/js/services.js"></script>
+	<link rel="stylesheet" href="/style/main.css">
+	<link rel="stylesheet" href="/style/service.css">
+  </head>
+  <body>
+	<div class="topnav">
+		<a href="/static/home.html">Home</a>
+		<div class="logout">
+			<form action="/logout" method="post">
+				<input type="submit" name="logout" value="Logout"/>
+			</form>
+		</div>
+	</div>
+    <h1>Services</h1>
+	<div id="services">
+		<div class="service tooltip">
+			<span class="tooltiptext">The SSH service allows the user to log in via a network connection.</span>
+			<div class="center-vert">
+				<p >SSH:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="ssh" class="service-cb" type="checkbox" onclick="set_service('ssh')">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+		<div class="service">
+			<div class="center-vert">
+				<p>Bluetooth server:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="go-bluetooth" class="service-cb" type="checkbox" onclick="set_service('go-bluetooth')">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+		<div class="service">
+			<div class="center-vert">
+				<p>Simulink upload server:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="go-upload-server" class="service-cb" type="checkbox" onclick="set_service('go-upload-server')">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+		<div class="service">
+			<div class="center-vert">
+				<p>Auto shutdown:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="go-auto-shutdown" class="service-cb" type="checkbox" onclick="set_service('go-auto-shutdown')">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>
