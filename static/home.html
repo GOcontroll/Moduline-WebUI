@@ -8,6 +8,15 @@
 	<link rel="stylesheet" href="/style/main.css">
   </head>
   <body>
+	<div class="topnav">
+		<a href="/static/services.html">Services</a>
+		<a href="/static/wifi.html">Wifi Settings</a>
+		<div class="logout">
+			<form action="/logout" method="post">
+				<input type="submit" name="logout" value="Logout"/>
+			</form>
+		</div>
+	</div>
     <h1>Home</h1>
 	<p>Serial number:</p>
 	<p id="serial_number">...</p>
@@ -17,22 +26,8 @@
 	<p id="controller_software">...</p>
 	<p>Simulink Model version:</p>
 	<p id="simulink_version">...</p>
-	<p>Wifi State:</p>
-	<label class="switch">
-		<input id="wifi" type="checkbox" onclick="set_wifi()">
-		<span class="slider round"></span>
-	</label>
-	<p>
-		New Access Point password:
-		<input id="ap_pass" type="password"/>
-	</p>
-	<button onclick="set_ap_pass()">Change password</button>
-	<p id="set_ap_pass_result"></p>
 	<form action="/api/GOcontroll_Linux.a2l" method="get">
 		<input type="submit" name="download" value="Download a2l"/>
 	</form>
-	<form action="/logout" method="post">
-		<input type="submit" name="logout" value="Logout"/>
-  </form>
   </body>
 </html>
