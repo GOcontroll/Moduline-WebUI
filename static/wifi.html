@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>GOcontroll wifi</title>
+    <meta charset="UTF-8">
+	<script src="/js/jquery.js"></script>
+	<script src="/js/wifi.js"></script>
+	<script src="/js/common.js"></script>
+	<link rel="stylesheet" href="/style/wifi.css">
+	<link rel="stylesheet" href="/style/main.css">
+  </head>
+  <body>
+	<div class="topnav">
+		<a href="/static/home.html">Home</a>
+		<div class="logout">
+			<form action="/logout" method="post">
+				<input type="submit" name="logout" value="Logout"/>
+			</form>
+		</div>
+	</div>
+    <h1>Wifi Settings</h1>
+	<p>Wifi State:</p>
+	<label class="switch">
+		<input id="wifi" type="checkbox" onclick="set_wifi()">
+		<span class="slider round"></span>
+	</label>
+	<p>
+		New Access Point password:
+		<input id="ap_pass" type="password"/>
+	</p>
+	<button onclick="set_ap_pass()">Change password</button>
+	<p id="set_ap_pass_result"></p>
+  </body>
+</html>
