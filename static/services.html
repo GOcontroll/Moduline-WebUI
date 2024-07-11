@@ -12,6 +12,7 @@
   <body>
 	<div class="topnav">
 		<a href="/static/home.html">Home</a>
+		<a href="/static/wifi.html">Wifi Settings</a>
 		<div class="logout">
 			<form action="/logout" method="post">
 				<input type="submit" name="logout" value="Logout"/>
@@ -28,6 +29,28 @@
 			<div class="center-vert">
 				<label class="switch">
 					<input id="ssh" class="service-cb" type="checkbox" onclick="set_service('ssh')">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+		<div class="service">
+			<div class="center-vert">
+				<p>Simulink:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="go-simulink" class="service-cb" type="checkbox" onclick="set_service('go-simulink')">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+		<div class="service">
+			<div class="center-vert">
+				<p>NodeRED:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="nodered" class="service-cb" type="checkbox" onclick="set_service('nodered')">
 					<span class="slider round"></span>
 				</label>
 			</div>

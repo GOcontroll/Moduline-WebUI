@@ -91,6 +91,10 @@ input:checked + .slider:before {
 	background: gray;
 }
 
+.topnav > * {
+	margin-left: 10px;
+}
+
 .center-vert {
 	display: flex;
 	flex-direction: column;

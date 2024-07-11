@@ -12,6 +12,7 @@
   <body>
 	<div class="topnav">
 		<a href="/static/home.html">Home</a>
+		<a href="/static/services.html">Services</a>
 		<div class="logout">
 			<form action="/logout" method="post">
 				<input type="submit" name="logout" value="Logout"/>
@@ -19,11 +20,13 @@
 		</div>
 	</div>
     <h1>Wifi Settings</h1>
+	<div class="thing">
 	<p>Wifi State:</p>
 	<label class="switch">
 		<input id="wifi" type="checkbox" onclick="set_wifi()">
 		<span class="slider round"></span>
 	</label>
+	</div>
 	<p>
 		New Access Point password:
 		<input id="ap_pass" type="password"/>
