@@ -4,7 +4,7 @@ import sys
 sys.path.append("/usr/moduline/python")
 
 def get_service(service: str) -> bool:
-	return not bool(subprocess.run(["systemctl", "status", service]).returncode)
+	return not bool(subprocess.run(["systemctl", "is-active", service]).returncode)
 
 def set_service(service: str, new_state: bool):
 	if new_state:
@@ -72,3 +72,15 @@ def delete_errors(errors: "list[str]"):
 	for file in errors:
 		severity = file[0]
 		os.remove(f"/usr/mem-diag/{severity}/{file}")
+
+def get_modules() -> dict:
+	pass
+
+def scan_modules() -> dict:
+	pass
+
+def update_modules() -> dict:
+	pass
+
+def overwrite_module(module: int, firmware: str) -> dict:
+	pass
