@@ -254,7 +254,7 @@ async def delete_errors(req: Request, session: Session):
 # services
 
 
-@app.get("/api/get_service")
+@app.post("/api/get_service")
 @with_session
 @auth
 async def get_service(req: Request, session: Session):
