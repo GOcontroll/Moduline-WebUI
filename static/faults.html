@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <title>GOcontroll faults</title>
+    <meta charset="UTF-8">
+	<script src="/js/jquery.js"></script>
+	<script src="/js/common.js"></script>
+	<script src="/js/faults.js"></script>
+	<link rel="stylesheet" href="/style/main.css">
+	<link rel="stylesheet" href="/style/faults.css">
+  </head>
+  <body>
+	<div class="topnav">
+		<a href="/static/home.html">Home</a>
+		<a href="/static/services.html">Services</a>
+		<a href="/static/wifi.html">Wifi Settings</a>
+		<div class="logout">
+			<form action="/logout" method="post">
+				<input type="submit" name="logout" value="Logout"/>
+			</form>
+		</div>
+	</div>
+	<div class="body">
+		<h1>Fault codes</h1>
+		<table id="fault-table">
+			<thead>
+				<tr>
+					<td>Fault code</td>
+					<td>Description</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody id="fault-codes">
+				<tr>
+					<td class="fault-code-fc">1234567</td>
+					<td class="fault-code-desc">A fault code that is a fault code</td>
+					<td>
+						<input class="fault-code-sel" id="1234567" type="checkbox">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<button onclick="select_all_codes()">Select all</button>
+		<button onclick="delete_codes()">Delete selected codes</button>
+	</div>
+  </body>
+</html>
+
+<template id="fault-code">
+	<tr>
+		<td class="fault-code-fc"></td>
+		<td class="fault-code-desc"></td>
+		<td>
+			<input class="fault-code-sel" type="checkbox">
+		</td>
+	</tr>
+</template>
