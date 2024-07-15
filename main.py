@@ -247,8 +247,7 @@ async def get_errors(req: Request, session: Session):
 @auth
 async def delete_errors(req: Request, session: Session):
     errors: "list[str]" = req.json
-    delete_errors(errors)
-    return json.dumps("")
+    return json.dumps(controller.delete_errors(errors))
 
 
 # services
@@ -269,8 +268,7 @@ async def set_service(req: Request, session: Session):
     data = req.json
     new_state: bool = data["new_state"]
     service: str = data["service"]
-    controller.set_service(service, new_state)
-    return json.dumps({"new_state": new_state})
+    return json.dumps({"new_state": controller.set_service(service, new_state)})
 
 
 # controller info
