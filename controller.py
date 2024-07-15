@@ -1,18 +1,21 @@
 import subprocess
 import os
 import sys
-sys.path.append("/usr/moduline/python")
 
 def get_service(service: str) -> bool:
 	return not bool(subprocess.run(["systemctl", "is-active", service]).returncode)
 
 def set_service(service: str, new_state: bool):
-	if new_state:
-		subprocess.run(["systemctl", "enable", service])
-		subprocess.run(["systemctl", "start", service])
-	else:
-		subprocess.run(["systemctl", "disable", service])
-		subprocess.run(["systemctl", "stop", service])
+	try:
+		if new_state:
+			subprocess.run(["systemctl", "enable", service]).check_returncode()
+			subprocess.run(["systemctl", "start", service]).check_returncode()
+		else:
+			subprocess.run(["systemctl", "disable", service]).check_returncode()
+			subprocess.run(["systemctl", "stop", service]).check_returncode()
+		return new_state
+	except:
+		return not new_state
 
 def get_sim_ver() -> dict:
 	try:
@@ -56,22 +59,31 @@ def get_serial_number() -> dict:
 	except:
 		return {"err": "Could not get the serial number"}
 
-def get_errors() -> dict:
+def get_errors() -> "list[dict]":
 	try:
 		import errors
+		sys.path.append("/usr/moduline/python")
 		return errors.get_errors()
 	except:
 		output = {}
-		for i in range(1,6):
-			files = os.listdir(f"/usr/mem-diag/{i}")
-			for file in files:
-				output[file] = ""
-		return output
+		try:
+			for i in range(1,6):
+				files = os.listdir(f"/usr/mem-diag/{i}")
+				for file,j in enumerate(files):
+					output[j]["fc"] = file
+			return output
+		except:
+			return {"err": "Could not get errors"}
+			# return [{"fc": "test", "desc": "test error"}]
 
-def delete_errors(errors: "list[str]"):
-	for file in errors:
-		severity = file[0]
-		os.remove(f"/usr/mem-diag/{severity}/{file}")
+def delete_errors(errors: "list[str]") -> dict:
+	try:
+		for file in errors:
+			severity = file[0]
+			os.remove(f"/usr/mem-diag/{severity}/{file}")
+			return {}
+	except:
+		return {"err": "Could not delete all requested errors."}
 
 def get_modules() -> dict:
 	pass
