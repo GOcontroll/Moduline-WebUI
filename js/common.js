@@ -4,5 +4,6 @@ async function post_json(url, data) {
 			method: 'POST', 
 			body: JSON.stringify(data),
 			headers: {"Content-type": "application/json; charset=UTF-8"}
-		})).json()
+		}
+	)).json()
 }
