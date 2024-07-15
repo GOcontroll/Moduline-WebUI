@@ -13,25 +13,39 @@
 	<div class="topnav">
 		<a href="/static/home.html">Home</a>
 		<a href="/static/services.html">Services</a>
+		<a href="/static/faults.html">Faults</a>
 		<div class="logout">
 			<form action="/logout" method="post">
 				<input type="submit" name="logout" value="Logout"/>
 			</form>
 		</div>
 	</div>
-    <h1>Wifi Settings</h1>
-	<div class="thing">
-	<p>Wifi State:</p>
-	<label class="switch">
-		<input id="wifi" type="checkbox" onclick="set_wifi()">
-		<span class="slider round"></span>
-	</label>
+	<div class="body">
+		<h1>Wifi Settings</h1>
+		<div class="thing">
+			<div class="center-vert">
+			<p>Wifi State:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="wifi" type="checkbox" onclick="set_wifi()">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+		<p>
+			New Access Point name:
+			<input id="ap_ssid" type="text"/>
+		</p>
+		<button onclick="set_ap_ssid()">Change name</button>
+		<p id="set_ap_ssid_result"></p>
+		<p>
+			New Access Point password:
+			<input id="ap_pass" type="password"/>
+			<button onclick="toggle_ap_pass()"></button>
+		</p>
+		<button onclick="set_ap_pass()">Change password</button>
+		<p id="set_ap_pass_result"></p>
 	</div>
-	<p>
-		New Access Point password:
-		<input id="ap_pass" type="password"/>
-	</p>
-	<button onclick="set_ap_pass()">Change password</button>
-	<p id="set_ap_pass_result"></p>
   </body>
 </html>

@@ -20,6 +20,21 @@ async function set_wifi() {
 	}
 }
 
+async function set_ap_ssid() {
+	let pass = $("#ap_ssid").val();
+	if (pass.length > 0){
+		try {
+			await post_json("/api/set_ap_ssid", pass);
+			$("#set_ap_ssid_result").html("Success!")
+			$("#ap_ssid").val("");
+		} catch (err) {
+			alert("could not set AP ssid:\n" +err);
+		}
+	} else {
+		$("#set_ap_ssid_result").html("ssid cannot be empty")
+	}
+}
+
 async function set_ap_pass() {
 	let pass = $("#ap_pass").val();
 	if (pass.length > 0){
@@ -32,6 +47,15 @@ async function set_ap_pass() {
 		}
 	} else {
 		$("#set_ap_pass_result").html("password cannot be empty")
+	}
+}
+
+async function toggle_ap_pass() {
+	const type = $("#ap_pass").prop("type");
+	if (type === "password") {
+		$("#ap_pass").prop("type", "text");
+	} else if (type === "text") {
+		$("#ap_pass").prop("type", "password");
 	}
 }
 
