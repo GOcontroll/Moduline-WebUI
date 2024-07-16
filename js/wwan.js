@@ -26,12 +26,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             const wwan_stats_request = await (await fetch('/api/get_wwan_stats')).json();
             if (wwan_stats_request.err) {
                 console.log(wwan_stats_request.err);
+                document.getElementsByClassName("body")[0].append("Could not get WWAN info, if it was just switch on this can take some time to be available");
                 return;
             }
             document.getElementById("imei").innerText = wwan_stats_request.imei;
             document.getElementById("operator").innerText = wwan_stats_request.operator;
             document.getElementById("model").innerText = wwan_stats_request.model;
             document.getElementById("signal").innerText = wwan_stats_request.signal;
+            document.getElementById("wwan_info").style.visibility = "visible";
         }
     } catch(err) {
         console.log(err);
