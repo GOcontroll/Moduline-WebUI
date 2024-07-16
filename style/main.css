@@ -94,7 +94,15 @@ input:checked + .slider:before {
 	justify-content: center;
 }
 
+.row{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 500px;
+}
+
 body {
 	background-color: white;
 	font-family: sans-serif;
+	margin-left: 10px;
 }

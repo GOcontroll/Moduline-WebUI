@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>GOcontroll services</title>
+    <title>GOcontroll Services</title>
     <meta charset="UTF-8">
 	<script src="/js/common.js"></script>
 	<script src="/js/services.js"></script>
@@ -11,7 +11,8 @@
   <body>
 	<div class="topnav">
 		<a href="/static/home.html">Home</a>
-		<a href="/static/wifi.html">Wifi Settings</a>
+		<a href="/static/wifi.html">Wi-Fi Settings</a>
+		<a href="/static/wwan.html">WWAN Settings</a>
 		<a href="/static/faults.html">Faults</a>
 		<div class="logout">
 			<form action="/logout" method="post">
@@ -19,14 +20,16 @@
 			</form>
 		</div>
 	</div>
-    <h1>Services</h1>
-	<div id="services">
+	<div class="body">
+		<h1>Services</h1>
+		<div id="services">
+		</div>
 	</div>
   </body>
 </html>
 
 <template id="service">
-	<div class="service tooltip">
+	<div class="service tooltip row">
 			<span class="tooltiptext"></span>
 			<div class="center-vert">
 				<p></p>
