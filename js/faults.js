@@ -1,10 +1,11 @@
 async function delete_codes() {
 	var errors = [];
-	$(".fault-code-sel").each( function () {
-		if ($(this).prop("checked")) {
-			errors.push($(this).prop("id"))
+	const checkboxes = document.querySelectorAll(".fault-code-sel");
+	for (const cb of checkboxes) {
+		if (cb.checked) {
+			errors.push(cb.id)
 		}
-	})
+	}
 	if (errors.length){
 		try {
 			const res = await post_json("/api/delete_errors", errors);
@@ -16,9 +17,10 @@ async function delete_codes() {
 }
 
 async function select_all_codes() {
-	$(".fault-code-sel").each( function () {
-		$(this).prop("checked", true);
-	})
+	const checkboxes = document.querySelectorAll(".fault-code-sel");
+	for (const cb of checkboxes) {
+		cb.checked = true
+	}
 }
 
 async function update_errors() {

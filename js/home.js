@@ -3,28 +3,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 	const software_request = fetch('/api/get_software');
 	const hardware_request = fetch("/api/get_hardware");
     const simulink_request = fetch('/api/get_sim_ver');
-	res = await (await sn_request).json();
+	var res = await (await sn_request).json();
 	if (res.err) {
-		$("#serial_number").html(res.err);
+		document.getElementById("serial_number").innerText = res.err;
 	} else {
-		$("#serial_number").html(res.sn);
+		document.getElementById("serial_number").innerText = res.sn;
 	}
 	res = await (await software_request).json();
 	if (res.err) {
-		$("#controller_software").html(res.err);
+		document.getElementById("controller_software").innerText = res.err;
 	} else {
-		$("#controller_software").html(res.version);
+		document.getElementById("controller_software").innerText = res.version;
 	}
 	res = await (await hardware_request).json();
 	if (res.err) {
-		$("#controller_hardware").html(res.err);
+		document.getElementById("controller_hardware").innerText = res.err;
 	} else {
-		$("#controller_hardware").html(res.hardware);
+		document.getElementById("controller_hardware").innerText = res.hardware;
 	}
 	res = await (await simulink_request).json();
 	if (res.err) {
-		$('#simulink_version').html(res.err);
+		document.getElementById("simulink_version").innerText = res.err;
 	} else {
-		$('#simulink_version').html(res.version);
+		document.getElementById("simulink_version").innerText = res.version;
 	}
 }, false);

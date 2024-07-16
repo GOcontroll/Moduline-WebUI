@@ -7,20 +7,14 @@ const services_list = [
 	["go-upload-server", "Simulink upload server"],
 	["go-auto-shutdown", "Auto shutdown"],
 	["gadget-getty\@ttyGS0", "USB terminal"],
-	["getty\@ttymxc2", "Serial terminal"],
-	["cron", "test"]
+	["getty\@ttymxc2", "Serial terminal"]
 ]
 
 async function set_service(service) {
 	//get what the next state of wifi should be
 	let set_state = {};
 	let cb = document.getElementById("service"+service);
-	console.log(cb.checked);
-	if (!cb.checked) { //why does this work with a not?
-		set_state.new_state = false;
-	} else {
-		set_state.new_state = true;
-	}
+	set_state.new_state = cb.checked;
 	set_state.service = services_list[service][0];
 	//try to make it a reality
 	try{
@@ -40,9 +34,8 @@ async function set_service(service) {
 
 async function get_service(service, index) {
 	try{
-		const resp = await post_json("/api/get_service", service[0]);
+		const promise = post_json("/api/get_service", service[0]);
 		const service_templ = document.getElementById("service");
-		const services = document.getElementById("services");
 
 		const new_service = service_templ.content.cloneNode(true);
 		let p = new_service.querySelector("p");
@@ -50,6 +43,7 @@ async function get_service(service, index) {
 		let cb = new_service.querySelector("input");
 		cb.id = "service" + index;
 		cb.setAttribute("onclick", "set_service("+index+")");
+		const resp = await promise;
 		cb.checked = resp.state
 		return new_service
 	} catch(err) {
