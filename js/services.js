@@ -1,19 +1,20 @@
 
 const services_list = [
-	["ssh", "SSH"],
-	["go-simulink", "Simulink"],
-	["nodered", "NodeRED"],
-	["go-bluetooth", "Bluetooth server"],
-	["go-upload-server", "Simulink upload server"],
-	["go-auto-shutdown", "Auto shutdown"],
-	["gadget-getty\@ttyGS0", "USB terminal"],
-	["getty\@ttymxc2", "Serial terminal"]
+	["ssh", "SSH", "OpenSSH service, to login over a network"],
+	["go-simulink", "Simulink", "Used to automatically start a simulink model"],
+	["nodered", "NodeRED", "The NodeRED programming interface"],
+	["go-bluetooth", "Bluetooth server", "The bluetooth server that is used with the GOcontroll Configuration app"],
+	["go-upload-server", "Simulink upload server", "A server that accepts new simulink models to be uploaded"],
+	["go-auto-shutdown", "Auto shutdown", "Auto shutdown when there is no kl15 and simulink is not running"],
+	["gadget-getty\@ttyGS0", "USB terminal", "Log in through the USB interface"],
+	["getty\@ttymxc2", "Serial terminal", "Log in through the rs232 interface"]
 ]
 
 async function set_service(service) {
 	//get what the next state of wifi should be
 	let set_state = {};
 	let cb = document.getElementById("service"+service);
+    //current state of checked is after it was clicked, so the state it needs to become
 	set_state.new_state = cb.checked;
 	set_state.service = services_list[service][0];
 	//try to make it a reality
@@ -40,6 +41,8 @@ async function get_service(service, index) {
 		const new_service = service_templ.content.cloneNode(true);
 		let p = new_service.querySelector("p");
 		p.textContent = service[1];
+        let tooltip = new_service.querySelector(".tooltiptext");
+        tooltip.textContent = service[2];
 		let cb = new_service.querySelector("input");
 		cb.id = "service" + index;
 		cb.setAttribute("onclick", "set_service("+index+")");

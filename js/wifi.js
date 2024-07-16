@@ -2,6 +2,7 @@ async function set_wifi() {
 	//get what the next state of wifi should be
 	let set_state = {};
 	const cb = document.getElementById("wifi");
+    //current state of checked is after it was clicked, so the state it needs to become
 	set_state.new_state = cb.checked;
 	//try to make it a reality
 	try{
