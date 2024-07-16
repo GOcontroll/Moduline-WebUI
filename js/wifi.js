@@ -63,5 +63,5 @@ async function toggle_ap_pass() {
 
 document.addEventListener('DOMContentLoaded', async function() {
 	const wifi_request = await (await fetch('/api/get_wifi')).json();
-	document.getElementById("wifi").checked = wifi_request;
+	document.getElementById("wifi").checked = wifi_request.state;
 }, false);

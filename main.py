@@ -2,6 +2,7 @@ import json
 import os
 import random
 import string
+import sys
 from functools import wraps
 
 from microdot import Microdot, Request, Response, redirect, send_file
@@ -117,6 +118,7 @@ async def js(request: Request, path):
         return "Not allowed", 404
     return send_file("js/" + path)
 
+
 @app.route("/assets/<path:path>")
 async def assets(request: Request, path):
     if ".." in path:
@@ -140,7 +142,7 @@ async def favicon(request: Request):
 @with_session
 @auth
 async def get_wifi(req: Request, session: Session):
-    return json.dumps(not os.path.isfile("/etc/modprobe.d/brcmfmac.conf"))
+    return json.dumps({"state": not os.path.isfile("/etc/modprobe.d/brcmfmac.conf")})
 
 
 @app.post("/api/set_wifi")
@@ -309,9 +311,8 @@ async def get_wwan(req: Request, session: Session):
 @with_session
 @auth
 async def set_wwan(req: Request, session: Session):
-    new_state = req.json
-    wwan.set_wwan(new_state)
-    return json.dumps({"new_state": new_state})
+    new_state = req.json["new_state"]
+    return json.dumps({"new_state": wwan.set_wwan(new_state)})
 
 
 @app.get("/api/get_wwan_stats")
@@ -357,5 +358,6 @@ async def set_static_ip(req: Request, session: Session):
 #########################################################################################################
 
 if __name__ == "__main__":
+    sys.path.append("/usr/moduline/python")
     tokens = []
     app.run()

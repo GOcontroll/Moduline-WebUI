@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>GOcontroll WWAN</title>
+    <meta charset="UTF-8">
+	<script src="/js/wwan.js"></script>
+	<script src="/js/common.js"></script>
+	<link rel="stylesheet" href="/style/wwan.css">
+	<link rel="stylesheet" href="/style/main.css">
+  </head>
+  <body>
+	<div class="topnav">
+		<a href="/static/home.html">Home</a>
+		<a href="/static/services.html">Services</a>
+		<a href="/static/wifi.html">Wi-Fi Settings</a>
+		<a href="/static/faults.html">Faults</a>
+		<div class="logout">
+			<form action="/logout" method="post">
+				<input type="submit" name="logout" value="Logout"/>
+			</form>
+		</div>
+	</div>
+	<div class="body">
+		<h1>WWAN Settings</h1>
+		<div class="row">
+			<div class="center-vert">
+			<p>WWAN State:</p>
+			</div>
+			<div class="center-vert">
+				<label class="switch">
+					<input id="wwan" type="checkbox" onclick="set_wwan()">
+					<span class="slider round"></span>
+				</label>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>
