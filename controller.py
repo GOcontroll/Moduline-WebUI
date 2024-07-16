@@ -65,12 +65,12 @@ def get_errors() -> "list[dict]":
 		sys.path.append("/usr/moduline/python")
 		return errors.get_errors()
 	except:
-		output = {}
+		output = []
 		try:
 			for i in range(1,6):
 				files = os.listdir(f"/usr/mem-diag/{i}")
-				for file,j in enumerate(files):
-					output[j]["fc"] = file
+				for file in files:
+					output.append({"fc": file})
 			return output
 		except:
 			return {"err": "Could not get errors"}
