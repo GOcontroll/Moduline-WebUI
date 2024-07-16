@@ -8,12 +8,12 @@ def set_wifi(state: bool) -> dict:
     """Set the state of the wifi receiver, true=on, false=off"""
     try:
         if state:
-            with open("/etc/modbprobe.d/brcmfmac.conf", "x") as file:
-                file.write("blacklist brcmfmac")
-            subprocess.run(["modprobe", "-r", "brcmfmac"])
-        else:
             os.remove("/etc/modprobe.d/brcmfmac.conf")
             subprocess.run(["modprobe", "brcmfmac"])
+        else:
+            with open("/etc/modprobe.d/brcmfmac.conf", "x") as file:
+                file.write("blacklist brcmfmac")
+            subprocess.run(["modprobe", "-r", "brcmfmac"])
         return {"state": state}
     except:
         return {"err": f"could not switch state to {state}"}
