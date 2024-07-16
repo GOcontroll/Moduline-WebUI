@@ -7,13 +7,16 @@ const services_list = [
 	["go-upload-server", "Simulink upload server"],
 	["go-auto-shutdown", "Auto shutdown"],
 	["gadget-getty\@ttyGS0", "USB terminal"],
-	["getty\@ttymxc2", "Serial terminal"]
+	["getty\@ttymxc2", "Serial terminal"],
+	["cron", "test"]
 ]
 
 async function set_service(service) {
 	//get what the next state of wifi should be
 	let set_state = {};
-	if ($("#service"+service).prop("checked") === "true") { //why does this work with a not?
+	let cb = document.getElementById("service"+service);
+	console.log(cb.checked);
+	if (!cb.checked) { //why does this work with a not?
 		set_state.new_state = false;
 	} else {
 		set_state.new_state = true;
@@ -24,14 +27,14 @@ async function set_service(service) {
 		const resp = await post_json("/api/set_service", set_state);
 		if (resp.err != undefined) {
 			//server failed to toggle wifi
-			$('#service'+service).prop("checked",!set_state.new_state);
+			cb.checked = !set_state.new_state;
 			alert("Could not toggle " + services_list[service][0] + ":\n" + resp.err);
 		} else {
-			$('#service'+service).prop("checked",resp.new_state);
+			cb.checked = resp.new_state;
 		}
 	} catch(err) {
 		alert("Could not toggle " + services_list[service][0] + ":\n" + err);
-		$('#service'+service).prop("checked",!set_state.new_state);
+		cb.checked = !set_state.new_state;
 	}
 }
 
@@ -47,11 +50,11 @@ async function get_service(service, index) {
 		let cb = new_service.querySelector("input");
 		cb.id = "service" + index;
 		cb.setAttribute("onclick", "set_service("+index+")");
-		cb.setAttribute("checked", resp.state);
+		cb.checked = resp.state
 		services.appendChild(new_service);
 		
 	} catch(err) {
-		alert("Could get the state of " + service[0] + ":\n" + err);
+		alert("Could not get the state of " + service[0] + ":\n" + err);
 	}
 }
 
