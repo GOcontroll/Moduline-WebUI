@@ -13,7 +13,7 @@ const services_list = [
 async function set_service(service) {
 	//get what the next state of wifi should be
 	let set_state = {};
-	if ($("#service"+service).prop("checked")) { //why does this work with a not?
+	if ($("#service"+service).prop("checked") === "true") { //why does this work with a not?
 		set_state.new_state = false;
 	} else {
 		set_state.new_state = true;
