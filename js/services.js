@@ -13,7 +13,7 @@ const services_list = [
 async function set_service(service) {
 	//get what the next state of wifi should be
 	let set_state = {};
-	if (!$("#service"+service).prop("checked")) { //why does this work with a not?
+	if ($("#service"+service).prop("checked")) { //why does this work with a not?
 		set_state.new_state = false;
 	} else {
 		set_state.new_state = true;
@@ -61,9 +61,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 	for (var i = 0; i < services_list.length; i++) {
 		get_service(services_list[i], i)
 	}
-	// const services = $(".service-cb");
-	// for (var i = 0; i < services.length; i++) {
-	// 	id = services[i].attributes.id.value;
-	// 	get_service(id);
-	// }
 }, false);
