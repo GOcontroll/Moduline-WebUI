@@ -1,6 +1,23 @@
 document.addEventListener('DOMContentLoaded', async function() {
-	const wwan_request = await (await fetch('/api/get_wwan')).json();
-	document.getElementById("wwan").checked = wwan_request.state;
+    try {
+	    const wwan_request = await (await fetch('/api/get_wwan')).json();
+        document.getElementById("wwan").checked = wwan_request.state;
+        if (wwan_request.state) {
+            const wwan_stats_request = await (await fetch('/api/get_wwan_stats')).json();
+            if (wwan_stats_request.err) {
+                console.log(wwan_stats_request.err);
+                return;
+            }
+            document.getElementById("imei").innerText = wwan_stats_request.imei;
+            document.getElementById("operator").innerText = wwan_stats_request.operator;
+            document.getElementById("model").innerText = wwan_stats_request.model;
+            document.getElementById("signal").innerText = wwan_stats_request.signal;
+        }
+    } catch(err) {
+        console.log(err);
+        return;
+    }
+	
 }, false);
 
 async function set_wwan() {
