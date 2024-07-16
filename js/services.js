@@ -51,8 +51,7 @@ async function get_service(service, index) {
 		cb.id = "service" + index;
 		cb.setAttribute("onclick", "set_service("+index+")");
 		cb.checked = resp.state
-		services.appendChild(new_service);
-		
+		return new_service
 	} catch(err) {
 		alert("Could not get the state of " + service[0] + ":\n" + err);
 	}
@@ -61,7 +60,11 @@ async function get_service(service, index) {
 document.addEventListener('DOMContentLoaded', async function() {
 	const services = document.getElementById("services");
 	services.textContent = ""
+	var promises = [];
 	for (var i = 0; i < services_list.length; i++) {
-		get_service(services_list[i], i)
+		promises.push(get_service(services_list[i], i))
+	}
+	for (const promise of promises) {
+		services.appendChild(await promise);
 	}
 }, false);
