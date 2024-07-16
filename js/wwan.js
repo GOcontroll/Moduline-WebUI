@@ -10,10 +10,10 @@ async function set_wwan() {
 		if (resp.err != undefined) {
 			//server failed to toggle wwan
 			cb.checked = !cb.checked;
-			alert("Could not toggle wwan:\n"+resp.err);
+			console.log("Could not toggle wwan:\n"+resp.err);
 		}
 	} catch(err) {
-		alert("Could not toggle wwan:\n" + err);
+		console.log("Could not toggle wwan:\n" + err);
 		cb.checked = !cb.checked;
 	}
 }
@@ -39,5 +39,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.log(err);
         return;
     }
-	
 }, false);

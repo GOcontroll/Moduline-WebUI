@@ -81,7 +81,7 @@ input:checked + .slider:before {
 .topnav {
 	display: flex;
 	flex-direction: row;
-	background: gray;
+	/* background: gray; */
 }
 
 .topnav > * {
