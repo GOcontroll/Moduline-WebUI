@@ -4,6 +4,12 @@ async function set_wifi() {
 	const cb = document.getElementById("wifi");
     //current state of checked is after it was clicked, so the state it needs to become
 	set_state.new_state = cb.checked;
+    if (!cb.checked) {
+        if (!confirm("Turning of Wi-Fi could break your current connection to the server.")) {
+            cb.checked = true;
+            return;
+        }
+    }
 	//try to make it a reality
 	try{
 		const resp = await post_json("/api/set_wifi", set_state);
@@ -24,11 +30,16 @@ async function set_ap_ssid() {
 	const ssid = input.value;
 	if (ssid.length > 0){
 		try {
-			await post_json("/api/set_ap_ssid", pass);
-			result.innerText = "Success!"
+			const response = await post_json("/api/set_ap_ssid", ssid);
+            if (response.err) {
+                result.innerText = "Error: " + response.err;
+                return;
+            }
+			result.innerText = "Success!";
 			input.value = "";
 		} catch (err) {
-			alert("could not set AP ssid:\n" +err);
+            result.innerText = "could not set AP ssid, invalid response";
+            console.log("could not set AP ssid:\n" +err);
 		}
 	} else {
 		result.innerText = "SSID cannot be empty"
@@ -39,10 +50,13 @@ async function set_ap_pass() {
 	const input = document.getElementById("ap_pass");
 	const result = document.getElementById("set_ap_pass_result");
 	const pass = input.value;
-	// let pass = $("#ap_pass").val();
 	if (pass.length > 0){
 		try {
-			await post_json("/api/set_ap_pass", pass);
+			const response = await post_json("/api/set_ap_pass", pass);
+            if (response.err) {
+                result.innerText = "Error: " + response.err;
+                return;
+            }
 			result.innerText = "Success!"
 			input.value = "";
 		} catch (err) {

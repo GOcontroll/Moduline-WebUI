@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import json
 import os
 import random
@@ -176,19 +178,23 @@ async def get_wifi_type(req: Request, session: Session):
 @auth
 async def set_ap_pass(req: Request, session: Session):
     new_password: str = req.json
-    wifi.set_ap_password(new_password)
+    res = wifi.set_ap_password(new_password)
+    if "err" in res:
+        return json.dumps(res)
     wifi.reload_ap()
-    return json.dumps("")
+    return json.dumps(res)
 
 
 @app.post("/api/set_ap_ssid")
 @with_session
 @auth
 async def set_ap_ssid(req: Request, session: Session):
-    new_ssid: str = req.form.get("ssid")
-    wifi.set_ap_ssid(new_ssid)
+    new_ssid: str = req.json
+    res = wifi.set_ap_ssid(new_ssid)
+    if "err" in res:
+        return json.dumps(res)
     wifi.reload_ap()
-    return json.dumps("")
+    return json.dumps(res)
 
 
 @app.get("/api/get_ap_connections")
