@@ -24,8 +24,8 @@ def get_sim_ver() -> dict:
         with open("/usr/simulink/CHANGELOG.md", "r") as changelog:
             head = changelog.readline()
         return {"version": head.split(" ")[1]}
-    except:
-        return {"err": "No changelog found"}
+    except Exception as ex:
+        return {"err": f"No changelog found\n{ex}"}
 
 
 def get_bt_name() -> str:
@@ -40,8 +40,8 @@ def get_hardware() -> dict:
     try:
         with open("/sys/firmware/devicetree/base/hardware", "r") as hardware_file:
             return {"hardware": hardware_file.read()}
-    except:
-        return {"err": "No hardware description found"}
+    except Exception as ex:
+        return {"err": f"No hardware description found\n{ex}"}
 
 
 def get_software() -> dict:
@@ -52,26 +52,29 @@ def get_software() -> dict:
         try:
             with open("/root/version.txt", "r") as file:
                 return {"version": file.readline()}
-        except:
-            return {"err": "No version file found"}
+        except Exception as ex:
+            return {"err": f"No version file found\n{ex}"}
 
 
 def get_serial_number() -> dict:
     try:
-        res = subprocess.run(["go-sn", "r"], stdout=subprocess.PIPE, text=True)
-        if res.returncode:
-            return {"err": "Could not get the serial number"}
-        else:
-            return {"sn": res.stdout.strip()}
-    except:
-        return {"err": "Could not get the serial number"}
+        res = subprocess.run(
+            ["go-sn", "r"], stdout=subprocess.PIPE, text=True
+        ).check_returncode()
+        return {"sn": res.stdout.strip()}
+    except subprocess.CalledProcessError as ex:
+        return {"err": f"Could not get the serial number\n{ex.output}"}
+    except Exception as ex:
+        return {"err": f"Could not get the serial number\n{ex}"}
 
 
 def get_errors() -> "list[dict]":
+    # try to import a custom get_errors script
     try:
         import errors
 
         return errors.get_errors()
+    # default route
     except:
         output = []
         try:
@@ -80,9 +83,8 @@ def get_errors() -> "list[dict]":
                 for file in files:
                     output.append({"fc": file})
             return output
-        except:
-            return {"err": "Could not get errors"}
-            # return [{"fc": "test", "desc": "test error"}]
+        except Exception as ex:
+            return {"err": f"Could not get errors\n{ex}"}
 
 
 def delete_errors(errors: "list[str]") -> dict:
@@ -91,8 +93,8 @@ def delete_errors(errors: "list[str]") -> dict:
             severity = file[0]
             os.remove(f"/usr/mem-diag/{severity}/{file}")
             return {}
-    except:
-        return {"err": "Could not delete all requested errors."}
+    except Exception as ex:
+        return {"err": f"Could not delete all requested errors\n{ex}"}
 
 
 def get_modules() -> dict:

@@ -47,7 +47,9 @@ def set_wifi_type(type: str) -> dict:
         return {"type": "ap"}
     elif type == "wifi":
         for con in wifi_connections:
-            subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "yes"])
+            subprocess.run(
+                ["nmcli", "con", "mod", con, "connection.autoconnect", "yes"]
+            )
         subprocess.run(
             [
                 "nmcli",
@@ -143,7 +145,10 @@ def get_ap_connections() -> dict:
 
     connected_devices = stdout.stdout.split("\n")
     for i in reversed(range(len(connected_devices))):
-        if "REACHABLE" not in connected_devices[i] and "DELAY" not in connected_devices[i]:
+        if (
+            "REACHABLE" not in connected_devices[i]
+            and "DELAY" not in connected_devices[i]
+        ):
             connected_devices.pop(i)
     try:
         stdout = subprocess.run(
@@ -162,7 +167,9 @@ def get_ap_connections() -> dict:
         connected_device_list = connected_device.split(" ")
         for previous_connection in previous_connections:
             if connected_device_list[2] in previous_connection:
-                final_device_list[connected_device_list[2]] = previous_connection.split(" ")[3]
+                final_device_list[connected_device_list[2]] = previous_connection.split(
+                    " "
+                )[3]
 
     return final_device_list
 
@@ -220,8 +227,9 @@ def connect_to_wifi_network(ssid: str, password: str) -> dict:
             stdout=subprocess.PIPE,
             text=True,
         ).check_returncode()
-    except Exception as ex:
-        return {"err": f"Could not connect to wifi network:\n{ex}"}
+    except subprocess.CalledProcessError as ex:
+        return {"err": f"Could not connect to wifi network:\n{ex.output}"}
+    # for some reason this function returns exit code 0 even on failure
     search_str = "Error:"
     idx = result.stdout.find(search_str)
     if idx >= 0:
