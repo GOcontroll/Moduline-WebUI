@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import ipaddress
 import json
 import os
 import random
@@ -14,6 +15,19 @@ import ModulineWebUI.controller as controller
 import ModulineWebUI.ethernet as ethernet
 import ModulineWebUI.wifi as wifi
 import ModulineWebUI.wwan as wwan
+
+USAGE = """
+go-webui V0.0.1
+
+[Optional]
+
+go-webui [-a ip-address][-p port]
+default ip = 127.0.0.1
+default port = 5000
+
+example:
+go-webui -a 0.0.0.0 -p 7500
+"""
 
 
 def authenticate_token(token: str) -> bool:
@@ -364,6 +378,31 @@ async def set_static_ip(req: Request, session: Session):
 #########################################################################################################
 
 if __name__ == "__main__":
+    # parse command line arguments
+    args = iter(sys.argv)
+    # skip the run argument
+    next(args)
+    ip = "127.0.0.1"
+    port = 5000
+    for arg in args:
+        if arg == "-a":
+            ip = next(args)
+            try:
+                ipaddress.IPv4Address(ip)
+            except ValueError:
+                print("given ip address was not valid")
+                exit(-1)
+        elif arg == "-p":
+            try:
+                port = int(next(args))
+            except ValueError:
+                print("given port was not valid")
+                exit(-1)
+        elif arg == "-h":
+            print(USAGE)
+            exit(0)
+    # add path for the error module
     sys.path.append("/usr/moduline/python")
+    # create global list of authentication tokens
     tokens = []
-    app.run()
+    app.run(host=ip, port=port)
