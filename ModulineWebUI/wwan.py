@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-import controller
+import ModulineWebUI.controller as controller
 
 
 def get_wwan() -> bool:

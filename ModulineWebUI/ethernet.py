@@ -81,7 +81,14 @@ def set_static_ip(ip: str) -> dict:
     except ValueError:
         return {"err": "Invalid IP"}
     subprocess.run(
-        ["nmcli", "con", "mod", "Wired connection static", "ipv4.addresses", ip + "/16"]
+        [
+            "nmcli",
+            "con",
+            "mod",
+            "Wired connection static",
+            "ipv4.addresses",
+            ip + "/16",
+        ]
     )
     if get_ethernet_mode() == "static":
         subprocess.run(["nmcli", "con", "down", "Wired connection static"])

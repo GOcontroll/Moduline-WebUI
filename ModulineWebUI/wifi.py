@@ -34,17 +34,29 @@ def set_wifi_type(type: str) -> dict:
         for con in wifi_connections:
             subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "no"])
         subprocess.run(
-            ["nmcli", "con", "mod", "GOcontroll-AP", "connection.autoconnect", "yes"]
+            [
+                "nmcli",
+                "con",
+                "mod",
+                "GOcontroll-AP",
+                "connection.autoconnect",
+                "yes",
+            ]
         )
         enable_connection("GOcontroll-AP")
         return {"type": "ap"}
     elif type == "wifi":
         for con in wifi_connections:
-            subprocess.run(
-                ["nmcli", "con", "mod", con, "connection.autoconnect", "yes"]
-            )
+            subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "yes"])
         subprocess.run(
-            ["nmcli", "con", "mod", "GOcontroll-AP", "connection.autoconnect", "no"]
+            [
+                "nmcli",
+                "con",
+                "mod",
+                "GOcontroll-AP",
+                "connection.autoconnect",
+                "no",
+            ]
         )
         disable_connection("GOcontroll-AP")
         return {"type": "wifi"}
@@ -79,7 +91,14 @@ def set_ap_password(new_password: str) -> dict:
     """Set a new access point password"""
     try:
         subprocess.run(
-            ["nmcli", "con", "mod", "GOcontroll-AP", "wifi-sec.psk", new_password]
+            [
+                "nmcli",
+                "con",
+                "mod",
+                "GOcontroll-AP",
+                "wifi-sec.psk",
+                new_password,
+            ]
         ).check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Failed to set new password:\n{ex.output}"}
@@ -92,7 +111,14 @@ def set_ap_ssid(new_ssid: str) -> dict:
     """Set a new access point name"""
     try:
         subprocess.run(
-            ["nmcli", "con", "mod", "GOcontroll-AP", "802-11-wireless.ssid", new_ssid]
+            [
+                "nmcli",
+                "con",
+                "mod",
+                "GOcontroll-AP",
+                "802-11-wireless.ssid",
+                new_ssid,
+            ]
         ).check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Failed to set new ssid:\n{ex.output}"}
@@ -106,7 +132,9 @@ def get_ap_connections() -> dict:
     final_device_list = {}
     try:
         stdout = subprocess.run(
-            ["ip", "n", "show", "dev", "wlan0"], stdout=subprocess.PIPE, text=True
+            ["ip", "n", "show", "dev", "wlan0"],
+            stdout=subprocess.PIPE,
+            text=True,
         ).check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not get information from ip:\n{ex.output}"}
@@ -115,14 +143,13 @@ def get_ap_connections() -> dict:
 
     connected_devices = stdout.stdout.split("\n")
     for i in reversed(range(len(connected_devices))):
-        if (
-            "REACHABLE" not in connected_devices[i]
-            and "DELAY" not in connected_devices[i]
-        ):
+        if "REACHABLE" not in connected_devices[i] and "DELAY" not in connected_devices[i]:
             connected_devices.pop(i)
     try:
         stdout = subprocess.run(
-            ["cat", "/var/lib/misc/dnsmasq.leases"], stdout=subprocess.PIPE, text=True
+            ["cat", "/var/lib/misc/dnsmasq.leases"],
+            stdout=subprocess.PIPE,
+            text=True,
         ).check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not get dns leases:\n{ex.output}"}
@@ -135,9 +162,7 @@ def get_ap_connections() -> dict:
         connected_device_list = connected_device.split(" ")
         for previous_connection in previous_connections:
             if connected_device_list[2] in previous_connection:
-                final_device_list[connected_device_list[2]] = previous_connection.split(
-                    " "
-                )[3]
+                final_device_list[connected_device_list[2]] = previous_connection.split(" ")[3]
 
     return final_device_list
 

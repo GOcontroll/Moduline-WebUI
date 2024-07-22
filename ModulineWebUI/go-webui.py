@@ -10,10 +10,10 @@ from functools import wraps
 from microdot import Microdot, Request, Response, redirect, send_file
 from microdot.session import Session, with_session
 
-import controller
-import ethernet
-import wifi
-import wwan
+import ModulineWebUI.controller as controller
+import ModulineWebUI.ethernet as ethernet
+import ModulineWebUI.wifi as wifi
+import ModulineWebUI.wwan as wwan
 
 
 def authenticate_token(token: str) -> bool:
@@ -78,9 +78,9 @@ async def index(req: Request, session: Session):
             session.save()
             return redirect("/static/home.html")
         else:
-            return send_file("login.html")
+            return send_file("ModulineWebUI/login.html")
     if token is None or not authenticate_token(token):
-        return send_file("login.html")
+        return send_file("ModulineWebUI/login.html")
     elif authenticate_token(token):
         return redirect("/static/home.html")
 
@@ -104,33 +104,33 @@ async def logout(req: Request, session: Session):
 async def static(req: Request, session: Session, path: str):
     if ".." in path:
         return "Not allowed", 404
-    return send_file("static/" + path)
+    return send_file("ModulineWebUI/static/" + path)
 
 
 @app.route("/style/<path:path>")
 async def style(req: Request, path):
     if ".." in path:
         return "Not allowed", 404
-    return send_file("style/" + path)
+    return send_file("ModulineWebUI/style/" + path)
 
 
 @app.route("/js/<path:path>")
 async def js(request: Request, path):
     if ".." in path:
         return "Not allowed", 404
-    return send_file("js/" + path)
+    return send_file("ModulineWebUI/js/" + path)
 
 
 @app.route("/assets/<path:path>")
 async def assets(request: Request, path):
     if ".." in path:
         return "Not allowed", 404
-    return send_file("assets/" + path)
+    return send_file("ModulineWebUI/assets/" + path)
 
 
 @app.get("/favicon.ico")
 async def favicon(request: Request):
-    return send_file("favicon.ico")
+    return send_file("ModulineWebUI/favicon.ico")
 
 
 #########################################################################################################
