@@ -4,8 +4,9 @@ async function set_wifi() {
 	const cb = document.getElementById("wifi");
     //current state of checked is after it was clicked, so the state it needs to become
 	set_state.new_state = cb.checked;
+    //warn user about possibility of terminating their connection
     if (!cb.checked) {
-        if (!confirm("Turning of Wi-Fi could break your current connection to the server.")) {
+        if (!confirm("Turning off Wi-Fi could break your current connection to the server.")) {
             cb.checked = true;
             return;
         }
