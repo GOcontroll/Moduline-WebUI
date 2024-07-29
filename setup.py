@@ -13,6 +13,9 @@ setup(
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    author="GOcontroll",
+    author_email="info@gocontroll.com",
+    maintainer="Maud Spierings",
     install_requires=["microdot", "PyJWT", "netifaces"],
     packages=[
         "ModulineWebUI",
