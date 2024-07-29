@@ -1,13 +1,13 @@
 # Moduline WebUI
 
+A web based UI for GOcontroll Moduline controllers.  
+Configure interfaces and services, check errorcodes or see general system information.
+
+## Development
+
 for development set up a venv, enter it and install the necessary packages:  
-`python -m venv .venv` #Create the venv  
+`python3 -m venv .venv` #Create the venv  
 `source .venv/bin/activate` #Enter the venv  
-`pip install setuptools`  
-`pip install build`  
-`pip install microdot`  
-`pip install PyJWT`  
-`pip install netifaces`  
 
 then run  
 `pip install --editable .`  
@@ -16,3 +16,6 @@ to install the module in your venv while using the regular project files as the 
 then run  
 `go-webui`  
 to launch the webserver
+
+`python3 setup.py sdist`  
+to build the package for distribution
