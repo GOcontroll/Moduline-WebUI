@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById("operator").innerText = wwan_stats_request.operator;
             document.getElementById("model").innerText = wwan_stats_request.model;
             document.getElementById("signal").innerText = wwan_stats_request.signal;
-            document.getElementById("wwan_info").style.visibility = "visible";
+            document.getElementById("wwan_info").style.display = "block";
         }
     } catch(err) {
         console.log(err);
