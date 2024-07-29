@@ -4,7 +4,9 @@ import ipaddress
 import json
 import os
 import random
+import ssl
 import string
+import subprocess
 import sys
 from functools import wraps
 
@@ -19,14 +21,22 @@ import ModulineWebUI.wwan as wwan
 USAGE = """
 go-webui V0.0.1
 
-[Optional]
+go-webui [options]
 
-go-webui [-a ip-address][-p port]
+options:
+-a address          the address to listen on
+-p port             the port to listen on
+-sslgen             generate a new self signed ssl key/certificate to use
+-sslkey path        give a path to an existing sslkey to use
+-sslcert path       give a path to an existing sslcert to use
+
 default ip = 127.0.0.1
 default port = 5000
 
-example:
+examples:
 go-webui -a 0.0.0.0 -p 7500
+go-webui -sslcert cert.pem -sslkey key.pen
+go-webui -a 0.0.0.0 -p 7500 -sslgen
 """
 
 
@@ -82,7 +92,7 @@ async def index(req: Request, session: Session):
     token = session.get("token")
     if req.method == "POST":
         passkey = req.form.get("passkey")
-        if passkey == "test":  # store passkey somewhere safe
+        if passkey == "test":  # TODO store passkey somewhere safe
             token = "".join(
                 random.SystemRandom().choice(string.ascii_uppercase + string.digits)
                 for _ in range(10)
@@ -384,6 +394,9 @@ if __name__ == "__main__":
     next(args)
     ip = "127.0.0.1"
     port = 5000
+    sslk = None
+    sslc = None
+    sslg = False
     for arg in args:
         if arg == "-a":
             ip = next(args)
@@ -401,8 +414,48 @@ if __name__ == "__main__":
         elif arg == "-h":
             print(USAGE)
             exit(0)
+        elif arg == "-sslkey":
+            sslk = next(args)
+            if not os.path.exists(sslk):
+                print("Could not find entered key")
+                exit(-1)
+        elif arg == "-sslcert":
+            sslc = next(args)
+            if not os.path.exists(sslc):
+                print("Could not find entered certificate")
+                exit(-1)
+        elif arg == "-sslgen":
+            sslg = True
+
     # add path for the error module
     sys.path.append("/usr/moduline/python")
     # create global list of authentication tokens
     tokens = []
-    app.run(host=ip, port=port)
+    if sslc is not None:
+        sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        sslctx.load_cert_chain(sslc, sslk)
+        app.run(host=ip, port=port, ssl=sslctx)
+    elif sslg:
+        subprocess.run(
+            [
+                "openssl",
+                "req",
+                "-x509",
+                "-newkey",
+                "rsa:4096",
+                "-nodes",
+                "-out",
+                "cert.pem",
+                "-keyout",
+                "key.pem",
+                "-days",
+                "365",
+                "-subj",
+                "/C=NL/ST=Gelderland/L=Ulft/O=GOcontroll B.V./OU='.'/CN=GOcontroll",
+            ]
+        ).check_returncode()
+        sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        sslctx.load_cert_chain("cert.pem", "key.pem")
+        app.run(host=ip, port=port, ssl=sslctx)
+    else:
+        app.run(host=ip, port=port)
