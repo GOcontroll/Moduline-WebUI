@@ -58,9 +58,8 @@ def get_software() -> dict:
 
 def get_serial_number() -> dict:
     try:
-        res = subprocess.run(
-            ["go-sn", "r"], stdout=subprocess.PIPE, text=True
-        ).check_returncode()
+        res = subprocess.run(["go-sn", "r"], stdout=subprocess.PIPE, text=True)
+        res.check_returncode()
         return {"sn": res.stdout.strip()}
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not get the serial number\n{ex.output}"}
