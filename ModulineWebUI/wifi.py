@@ -9,9 +9,9 @@ def set_wifi(state: bool) -> dict:
     try:
         if state:
             os.remove("/etc/modprobe.d/brcmfmac.conf")
-            subprocess.run(["/sbin/modprobe", "brcmfmac"])
+            subprocess.run(["/sbin/modprobe", "brcmfmac"]).check_returncode()
         else:
-            subprocess.run(["/sbin/modprobe", "-r", "brcmfmac"])
+            subprocess.run(["/sbin/modprobe", "-r", "brcmfmac"]).check_returncode()
             with open("/etc/modprobe.d/brcmfmac.conf", "x") as file:
                 file.write("blacklist brcmfmac")
         return {"state": state}
@@ -23,68 +23,107 @@ def set_wifi_type(type: str) -> dict:
     """Set the type that the wifi receiver should act as, 'ap'=access point 'wifi'=receiver"""
     # to make the switch permanent all wifi connections need to have their autoconnect settings altered
     # so all wifi connections need to be gathered
-    stdout = subprocess.run(["nmcli", "-t", "con"], stdout=subprocess.PIPE, text=True)
-    connections = stdout.stdout.rstrip().split("\n")
-    wifi_connections = []
-    for con in connections:
-        if "wireless" in con:
-            if "GOcontroll-AP" not in con:
-                wifi_connections.append(con.split(":")[0])
-    if type == "ap":
-        for con in wifi_connections:
-            subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "no"])
-        subprocess.run(
-            [
-                "nmcli",
-                "con",
-                "mod",
-                "GOcontroll-AP",
-                "connection.autoconnect",
-                "yes",
-            ]
-        )
-        enable_connection("GOcontroll-AP")
-        return {"type": "ap"}
-    elif type == "wifi":
-        for con in wifi_connections:
-            subprocess.run(
-                ["nmcli", "con", "mod", con, "connection.autoconnect", "yes"]
+    try:
+        try:
+            stdout = subprocess.run(
+                ["nmcli", "-t", "con"], stdout=subprocess.PIPE, text=True
             )
-        subprocess.run(
-            [
-                "nmcli",
-                "con",
-                "mod",
-                "GOcontroll-AP",
-                "connection.autoconnect",
-                "no",
-            ]
-        )
-        disable_connection("GOcontroll-AP")
-        return {"type": "wifi"}
-    else:
-        return {"err": "Invalid type given, must be 'ap' or 'wifi'"}
+            stdout.check_returncode()
+        except:
+            return {"err": "Could not get list of connections"}
+        connections = stdout.stdout.rstrip().split("\n")
+        wifi_connections = []
+        for con in connections:
+            if "wireless" in con:
+                if "GOcontroll-AP" not in con:
+                    wifi_connections.append(con.split(":")[0])
+        if type == "ap":
+            for con in wifi_connections:
+                try:
+                    subprocess.run(
+                        ["nmcli", "con", "mod", con, "connection.autoconnect", "no"]
+                    ).check_returncode()
+                except:
+                    return {
+                        "err": "could not turn of autoconnect on all wifi connections"
+                    }
+            try:
+                subprocess.run(
+                    [
+                        "nmcli",
+                        "con",
+                        "mod",
+                        "GOcontroll-AP",
+                        "connection.autoconnect",
+                        "yes",
+                    ]
+                ).check_returncode()
+            except:
+                return {"err": "could not set the access point to autoconnect"}
+            try:
+                enable_connection("GOcontroll-AP")
+            except:
+                return {"err": "Could not raise the access point"}
+            return {"type": "ap"}
+        elif type == "wifi":
+            for con in wifi_connections:
+                try:
+                    subprocess.run(
+                        ["nmcli", "con", "mod", con, "connection.autoconnect", "yes"]
+                    ).check_returncode()
+                except:
+                    return {"err": "Could not set all wifi connections to autoconnect"}
+            try:
+                subprocess.run(
+                    [
+                        "nmcli",
+                        "con",
+                        "mod",
+                        "GOcontroll-AP",
+                        "connection.autoconnect",
+                        "no",
+                    ]
+                ).check_returncode()
+            except:
+                return {"err": "Could not disable access point auto connect"}
+            try:
+                disable_connection("GOcontroll-AP")
+            except:
+                return {"err": "Could not deactivate access point"}
+            return {"type": "wifi"}
+        else:
+            return {"err": "Invalid type given, must be 'ap' or 'wifi'"}
+    except:
+        return {"err": "Could not set wifi type"}
 
 
 def get_wifi_type() -> dict:
-    output = subprocess.run(
-        ["nmcli", "-t", "con", "show", "GOcontroll-AP"],
-        stdout=subprocess.PIPE,
-        text=True,
-    )
-    option = "connection.autoconnect:"
-    idx = output.stdout.find(option)
-    if idx >= 0:
-        if output.stdout[idx + len(option)] == "y":
-            return {"type": "ap"}
+    try:
+        try:
+            output = subprocess.run(
+                ["nmcli", "-t", "con", "show", "GOcontroll-AP"],
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+            output.check_returncode()
+        except:
+            return {"err": "Could not get access point information"}
+        option = "connection.autoconnect:"
+        idx = output.stdout.find(option)
+        if idx >= 0:
+            if output.stdout[idx + len(option)] == "y":
+                return {"type": "ap"}
+            else:
+                return {"type": "wifi"}
         else:
-            return {"type": "wifi"}
-    else:
-        return {"err": "Could not determine current wifi type"}
+            return {"err": "Could not determine current wifi type"}
+    except Exception as ex:
+        return {"err": f"Could not determine current wifi type:\n{ex}"}
 
 
 def reload_ap():
-    """Reload the access point after changes have been made for example"""
+    """Reload the access point after changes have been made for example
+    raises subprocess.CalledProcessError when unsuccessfull"""
     disable_connection("GOcontroll-AP")
     enable_connection("GOcontroll-AP")
 
@@ -137,7 +176,8 @@ def get_ap_connections() -> dict:
             ["ip", "n", "show", "dev", "wlan0"],
             stdout=subprocess.PIPE,
             text=True,
-        ).check_returncode()
+        )
+        stdout.check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not get information from ip:\n{ex.output}"}
     except Exception as ex:
@@ -155,7 +195,8 @@ def get_ap_connections() -> dict:
             ["cat", "/var/lib/misc/dnsmasq.leases"],
             stdout=subprocess.PIPE,
             text=True,
-        ).check_returncode()
+        )
+        stdout.check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not get dns leases:\n{ex.output}"}
     except Exception as ex:
@@ -175,13 +216,15 @@ def get_ap_connections() -> dict:
 
 
 def disable_connection(con: str):
-    """Set the connection 'con' to down"""
-    subprocess.run(["nmcli", "con", "down", con])
+    """Set the connection 'con' to down
+    raises subprocess.CalledProcessError when unsuccessfull"""
+    subprocess.run(["nmcli", "con", "down", con]).check_returncode()
 
 
 def enable_connection(con: str):
-    """Set the connection 'con' to up"""
-    subprocess.run(["nmcli", "con", "up", con])
+    """Set the connection 'con' to up
+    raises subprocess.CalledProcessError when unsuccessfull"""
+    subprocess.run(["nmcli", "con", "up", con]).check_returncode()
 
 
 def get_wifi_networks() -> dict:
@@ -190,7 +233,8 @@ def get_wifi_networks() -> dict:
     try:
         wifi_list = subprocess.run(
             ["nmcli", "-t", "dev", "wifi"], stdout=subprocess.PIPE, text=True
-        ).check_returncode()
+        )
+        wifi_list.check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not get wifi networks:\n{ex.output}"}
     except Exception as ex:
@@ -226,7 +270,8 @@ def connect_to_wifi_network(ssid: str, password: str) -> dict:
             ["nmcli", "dev", "wifi", "connect", ssid, "password", password],
             stdout=subprocess.PIPE,
             text=True,
-        ).check_returncode()
+        )
+        result.check_returncode()
     except subprocess.CalledProcessError as ex:
         return {"err": f"Could not connect to wifi network:\n{ex.output}"}
     # for some reason this function returns exit code 0 even on failure
