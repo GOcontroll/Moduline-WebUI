@@ -21,6 +21,7 @@ def get_wwan_stats() -> dict:
         modem = subprocess.run(
             ["mmcli", "-J", "--list-modems"], stdout=subprocess.PIPE, text=True
         )
+        modem.check_returncode()
         modem = json.loads(modem.stdout)
         modem_number = modem["modem-list"][0]
         output = subprocess.run(
@@ -28,6 +29,7 @@ def get_wwan_stats() -> dict:
             stdout=subprocess.PIPE,
             text=True,
         )
+        output.check_returncode()
         mmcli = json.loads(output.stdout)
         stats = {}
         stats["imei"] = mmcli["modem"]["3gpp"]["imei"]
