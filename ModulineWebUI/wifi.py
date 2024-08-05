@@ -1,11 +1,29 @@
+import json
 import os
 import subprocess
 
 import netifaces as ni
+from microdot import Request
+from microdot.session import Session, with_session
+
+from ModulineWebUI.controller import get_service, set_service
+from ModulineWebUI.go_webui import app, auth
 
 
-def set_wifi(state: bool) -> dict:
-    """Set the state of the wifi receiver, true=on, false=off"""
+@app.get("/api/get_wifi")
+@with_session
+@auth
+async def get_wifi(req: Request, session: Session):
+    return json.dumps({"state": not os.path.isfile("/etc/modprobe.d/brcmfmac.conf")})
+
+
+@app.post("/api/set_wifi")
+@with_session
+@auth
+async def set_wifi(req: Request, session: Session):
+    """Set the wifi state, request contains a json boolean value\n
+    Returns the state of wifi after this function is finished"""
+    state = req.json["new_state"]
     try:
         if state:
             os.remove("/etc/modprobe.d/brcmfmac.conf")
@@ -14,13 +32,17 @@ def set_wifi(state: bool) -> dict:
             subprocess.run(["/sbin/modprobe", "-r", "brcmfmac"]).check_returncode()
             with open("/etc/modprobe.d/brcmfmac.conf", "x") as file:
                 file.write("blacklist brcmfmac")
-        return {"state": state}
+        return json.dumps({"state": state})
     except Exception as ex:
-        return {"err": f"could not switch state to {state}\n{ex}"}
+        return json.dumps({"err": f"could not switch state to {state}\n{ex}"})
 
 
-def set_wifi_type(type: str) -> dict:
-    """Set the type that the wifi receiver should act as, 'ap'=access point 'wifi'=receiver"""
+@app.post("/api/set_wifi_type")
+@with_session
+@auth
+async def set_wifi_type(req: Request, session: Session):
+    """Set the wifi type, AP or receiver, request is a string containing 'ap' or 'wifi'"""
+    wifi_type = req.json["new_type"]
     # to make the switch permanent all wifi connections need to have their autoconnect settings altered
     # so all wifi connections need to be gathered
     try:
@@ -30,23 +52,23 @@ def set_wifi_type(type: str) -> dict:
             )
             stdout.check_returncode()
         except:
-            return {"err": "Could not get list of connections"}
+            return json.dumps({"err": "Could not get list of connections"})
         connections = stdout.stdout.rstrip().split("\n")
         wifi_connections = []
         for con in connections:
             if "wireless" in con:
                 if "GOcontroll-AP" not in con:
                     wifi_connections.append(con.split(":")[0])
-        if type == "ap":
+        if wifi_type == "ap":
             for con in wifi_connections:
                 try:
                     subprocess.run(
                         ["nmcli", "con", "mod", con, "connection.autoconnect", "no"]
                     ).check_returncode()
                 except:
-                    return {
-                        "err": "could not turn of autoconnect on all wifi connections"
-                    }
+                    return json.dumps(
+                        {"err": "could not turn of autoconnect on all wifi connections"}
+                    )
             try:
                 subprocess.run(
                     [
@@ -59,20 +81,24 @@ def set_wifi_type(type: str) -> dict:
                     ]
                 ).check_returncode()
             except:
-                return {"err": "could not set the access point to autoconnect"}
+                return json.dumps(
+                    {"err": "could not set the access point to autoconnect"}
+                )
             try:
                 enable_connection("GOcontroll-AP")
             except:
-                return {"err": "Could not raise the access point"}
+                return json.dumps({"err": "Could not raise the access point"})
             return {"type": "ap"}
-        elif type == "wifi":
+        elif wifi_type == "wifi":
             for con in wifi_connections:
                 try:
                     subprocess.run(
                         ["nmcli", "con", "mod", con, "connection.autoconnect", "yes"]
                     ).check_returncode()
                 except:
-                    return {"err": "Could not set all wifi connections to autoconnect"}
+                    return json.dumps(
+                        {"err": "Could not set all wifi connections to autoconnect"}
+                    )
             try:
                 subprocess.run(
                     [
@@ -85,19 +111,24 @@ def set_wifi_type(type: str) -> dict:
                     ]
                 ).check_returncode()
             except:
-                return {"err": "Could not disable access point auto connect"}
+                return json.dumps(
+                    {"err": "Could not disable access point auto connect"}
+                )
             try:
                 disable_connection("GOcontroll-AP")
             except:
-                return {"err": "Could not deactivate access point"}
-            return {"type": "wifi"}
+                return json.dumps({"err": "Could not deactivate access point"})
+            return json.dumps({"type": "wifi"})
         else:
-            return {"err": "Invalid type given, must be 'ap' or 'wifi'"}
+            return json.dumps({"err": "Invalid type given, must be 'ap' or 'wifi'"})
     except:
-        return {"err": "Could not set wifi type"}
+        return json.dumps({"err": "Could not set wifi type"})
 
 
-def get_wifi_type() -> dict:
+@app.get("/api/get_wifi_type")
+@with_session
+@auth
+async def get_wifi_type(req: Request, session: Session):
     try:
         try:
             output = subprocess.run(
@@ -107,18 +138,18 @@ def get_wifi_type() -> dict:
             )
             output.check_returncode()
         except:
-            return {"err": "Could not get access point information"}
+            return json.dumps({"err": "Could not get access point information"})
         option = "connection.autoconnect:"
         idx = output.stdout.find(option)
         if idx >= 0:
             if output.stdout[idx + len(option)] == "y":
-                return {"type": "ap"}
+                return json.dumps({"type": "ap"})
             else:
-                return {"type": "wifi"}
+                return json.dumps({"type": "wifi"})
         else:
-            return {"err": "Could not determine current wifi type"}
+            return json.dumps({"err": "Could not determine current wifi type"})
     except Exception as ex:
-        return {"err": f"Could not determine current wifi type:\n{ex}"}
+        return json.dumps({"err": f"Could not determine current wifi type:\n{ex}"})
 
 
 def reload_ap():
@@ -128,8 +159,11 @@ def reload_ap():
     enable_connection("GOcontroll-AP")
 
 
-def set_ap_password(new_password: str) -> dict:
-    """Set a new access point password"""
+@app.post("/api/set_ap_pass")
+@with_session
+@auth
+async def set_ap_pass(req: Request, session: Session):
+    new_password: str = req.json
     try:
         subprocess.run(
             [
@@ -142,14 +176,18 @@ def set_ap_password(new_password: str) -> dict:
             ]
         ).check_returncode()
     except subprocess.CalledProcessError as ex:
-        return {"err": f"Failed to set new password:\n{ex.output}"}
+        return json.dumps({"err": f"Failed to set new password:\n{ex.output}"})
     except Exception as ex:
-        return {"err": f"Failed to set new password:\n{ex}"}
-    return {}
+        return json.dumps({"err": f"Failed to set new password:\n{ex}"})
+    reload_ap()
+    return json.dumps({})
 
 
-def set_ap_ssid(new_ssid: str) -> dict:
-    """Set a new access point name"""
+@app.post("/api/set_ap_ssid")
+@with_session
+@auth
+async def set_ap_ssid(req: Request, session: Session):
+    new_ssid: str = req.json
     try:
         subprocess.run(
             [
@@ -162,13 +200,17 @@ def set_ap_ssid(new_ssid: str) -> dict:
             ]
         ).check_returncode()
     except subprocess.CalledProcessError as ex:
-        return {"err": f"Failed to set new ssid:\n{ex.output}"}
+        return json.dumps({"err": f"Failed to set new ssid:\n{ex.output}"})
     except Exception as ex:
-        return {"err": f"Failed to set new ssid:\n{ex}"}
-    return {}
+        return json.dumps({"err": f"Failed to set new ssid:\n{ex}"})
+    reload_ap()
+    return json.dumps({})
 
 
-def get_ap_connections() -> dict:
+@app.get("/api/get_ap_connections")
+@with_session
+@auth
+async def get_ap_connections(req: Request, session: Session):
     """Get a list of hostnames connected to the access point"""
     final_device_list = {}
     try:
@@ -179,9 +221,9 @@ def get_ap_connections() -> dict:
         )
         stdout.check_returncode()
     except subprocess.CalledProcessError as ex:
-        return {"err": f"Could not get information from ip:\n{ex.output}"}
+        return json.dumps({"err": f"Could not get information from ip:\n{ex.output}"})
     except Exception as ex:
-        return {"err": f"Could not get information from ip:\n{ex}"}
+        return json.dumps({"err": f"Could not get information from ip:\n{ex}"})
 
     connected_devices = stdout.stdout.split("\n")
     for i in reversed(range(len(connected_devices))):
@@ -198,9 +240,9 @@ def get_ap_connections() -> dict:
         )
         stdout.check_returncode()
     except subprocess.CalledProcessError as ex:
-        return {"err": f"Could not get dns leases:\n{ex.output}"}
+        return json.dumps({"err": f"Could not get dns leases:\n{ex.output}"})
     except Exception as ex:
-        return {"err": f"Could not get dns leases:\n{ex}"}
+        return json.dumps({"err": f"Could not get dns leases:\n{ex}"})
 
     previous_connections = stdout.stdout.split("\n")[:-1]
 
@@ -212,7 +254,7 @@ def get_ap_connections() -> dict:
                     " "
                 )[3]
 
-    return final_device_list
+    return json.dumps(final_device_list)
 
 
 def disable_connection(con: str):
@@ -227,7 +269,10 @@ def enable_connection(con: str):
     subprocess.run(["nmcli", "con", "up", con]).check_returncode()
 
 
-def get_wifi_networks() -> dict:
+@app.get("/api/get_wifi_networks")
+@with_session
+@auth
+async def get_wifi_networks(req: Request, session: Session):
     """Get the list of available wifi networks and their attributes"""
     # gets the list in a layout optimal for scripting, networks seperated by \n, columns seperated by :
     try:
@@ -236,9 +281,9 @@ def get_wifi_networks() -> dict:
         )
         wifi_list.check_returncode()
     except subprocess.CalledProcessError as ex:
-        return {"err": f"Could not get wifi networks:\n{ex.output}"}
+        return json.dumps({"err": f"Could not get wifi networks:\n{ex.output}"})
     except Exception as ex:
-        return {"err": f"Could not get wifi networks:\n{ex}"}
+        return json.dumps({"err": f"Could not get wifi networks:\n{ex}"})
 
     networks = wifi_list.stdout.rstrip().split("\n")
     networks_out = {}
@@ -260,11 +305,16 @@ def get_wifi_networks() -> dict:
                 "strength": strength,
                 "security": security,
             }
-    return networks_out
+    return json.dumps(networks_out)
 
 
-def connect_to_wifi_network(ssid: str, password: str) -> dict:
-    """Try to connect to the wifi network with the given arguments"""
+@app.post("/api/connect_to_wifi_network")
+@with_session
+@auth
+async def connect_to_wifi_network(req: Request, session: Session):
+    args: dict = req.json
+    ssid = args["ssid"]
+    password = args["password"]
     try:
         result = subprocess.run(
             ["nmcli", "dev", "wifi", "connect", ssid, "password", password],
@@ -273,17 +323,20 @@ def connect_to_wifi_network(ssid: str, password: str) -> dict:
         )
         result.check_returncode()
     except subprocess.CalledProcessError as ex:
-        return {"err": f"Could not connect to wifi network:\n{ex.output}"}
+        return json.dumps({"err": f"Could not connect to wifi network:\n{ex.output}"})
     # for some reason this function returns exit code 0 even on failure
     search_str = "Error:"
     idx = result.stdout.find(search_str)
     if idx >= 0:
-        return {"err": f"{result.stdout[len(search_str):].strip()}"}
-    return {}
+        return json.dumps({"err": f"{result.stdout[len(search_str):].strip()}"})
+    return json.dumps({})
 
 
-def get_wifi_ip() -> dict:
+@app.post("/api/get_wifi_ip")
+@with_session
+@auth
+async def get_wifi_ip(req: Request, session: Session):
     try:
-        return {"ip": ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]}
+        return json.dumps({"ip": ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]})
     except Exception as ex:
-        return {"err": f"Could not get ip:\n{ex}"}
+        return json.dumps({"err": f"Could not get ip:\n{ex}"})

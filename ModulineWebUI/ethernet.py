@@ -1,10 +1,18 @@
 import ipaddress
+import json
 import subprocess
 
 import netifaces as ni
+from microdot import Request
+from microdot.session import Session, with_session
+
+from ModulineWebUI.go_webui import app, auth
 
 
-def get_ethernet_mode() -> dict:
+@app.get("/api/get_ethernet_mode")
+@with_session
+@auth
+async def get_ethernet_mode(req: Request, session: Session) -> dict:
     stdout = subprocess.run(["nmcli", "-t", "con"], stdout=subprocess.PIPE, text=True)
     result = stdout.stdout
     result = result.split("\n")
@@ -20,10 +28,15 @@ def get_ethernet_mode() -> dict:
                 break
     else:  # if no break
         mode["error"] = "Unknown mode"
-    return mode
+    return json.dumps(mode)
 
 
-def set_ethernet_mode(mode: str) -> dict:
+@app.post("/api/set_ethernet_mode")
+@with_session
+@auth
+async def set_ethernet_mode(req: Request, session: Session):
+    data = req.json
+    mode = data["mode"]
     if mode == "static":
         subprocess.run(
             [
@@ -47,7 +60,7 @@ def set_ethernet_mode(mode: str) -> dict:
         )
         subprocess.run(["nmcli", "con", "down", "Wired connection auto"])
         subprocess.run(["nmcli", "con", "up", "Wired connection static"])
-        return {"mode": "static"}
+        return json.dumps({"mode": "static"})
     elif mode == "auto":
         subprocess.run(
             [
@@ -71,15 +84,20 @@ def set_ethernet_mode(mode: str) -> dict:
         )
         subprocess.run(["nmcli", "con", "down", "Wired connection static"])
         subprocess.run(["nmcli", "con", "up", "Wired connection auto"])
-        return {"mode": "auto"}
-    return {"err": "Invalid mode, send either 'static' or 'auto'"}
+        return json.dumps({"mode": "auto"})
+    return json.dumps({"err": "Invalid mode, send either 'static' or 'auto'"})
 
 
-def set_static_ip(ip: str) -> dict:
+@app.post("/api/set_static_ip")
+@with_session
+@auth
+async def set_static_ip(req: Request, session: Session):
+    data = req.json
+    ip = data["ip"]
     try:
         ipaddress.IPv4Address(ip)
     except ValueError:
-        return {"err": "Invalid IP"}
+        return json.dumps({"err": "Invalid IP"})
     subprocess.run(
         [
             "nmcli",
@@ -90,10 +108,20 @@ def set_static_ip(ip: str) -> dict:
             ip + "/16",
         ]
     )
+    with open("/etc/dnsmasq.conf", "r") as filer:
+        content = str(filer.readlines())
+    for line, i in enumerate(content):
+        if line.find("dhcp-range") >= 0 and line.find("eth0") >= 0:
+            last = int(ip.split(".")[-1])
+            main = ip.split(".")[0:-1]
+            content[i] = f"dhcp-range={main}.1,{main}.{last -1},12h"
+    with open("/etc/dnsmasq.conf", "w") as filew:
+        filew.write("\n".join(content))
     if get_ethernet_mode() == "static":
         subprocess.run(["nmcli", "con", "down", "Wired connection static"])
         subprocess.run(["nmcli", "con", "up", "Wired connection static"])
-    return {"ip": ip}
+        subprocess.run(["systemctl", "restart", "dnsmasq"])
+    return json.dumps({"ip": ip})
 
 
 def get_static_ip() -> dict:
@@ -118,8 +146,11 @@ def get_static_ip() -> dict:
         return {"err": "Could get the ip address"}
 
 
-def get_ethernet_ip() -> dict:
+@app.get("/api/get_ethernet_ip")
+@with_session
+@auth
+async def get_ethernet_ip(req: Request, session: Session):
     try:
-        return {"ip": ni.ifaddresses("eth0")[ni.AF_INET][0]["addr"]}
+        return json.dumps({"ip": ni.ifaddresses("eth0")[ni.AF_INET][0]["addr"]})
     except:
-        return {"err": "no IP available"}
+        return json.dumps({"err": "no IP available"})
