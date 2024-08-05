@@ -127,11 +127,17 @@ input:checked + .slider:before {
 	justify-content: center;
 }
 
-.row{
+.row {
+    position: relative;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	width: 500px;
+    
+}
+.row > input {
+    height: fit-content;
+    align-self: center;
 }
 
 body {

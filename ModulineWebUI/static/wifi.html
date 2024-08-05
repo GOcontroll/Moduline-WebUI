@@ -33,17 +33,17 @@
 				</label>
 			</div>
 		</div>
-		<p>
-			New Access Point name:
-			<input id="ap_ssid" type="text"/>
-		</p>
+        <div class="row">
+            <p>New Access Point name:</p>
+            <input id="ap_ssid" type="text"/>
+        </div>
 		<button onclick="set_ap_ssid()">Change name</button>
 		<p id="set_ap_ssid_result"></p>
-		<p>
-			New Access Point password:
+        <div class="row">
+		    <p>New Access Point password:</p>
 			<input id="ap_pass" type="password"/>
-			<button onclick="toggle_ap_pass()"></button>
-		</p>
+			<button id="vis_pass" onclick="toggle_ap_pass()"><img src="../assets/visibility.png"></button>
+		</div>
 		<button onclick="set_ap_pass()">Change password</button>
 		<p id="set_ap_pass_result"></p>
 	</div>
