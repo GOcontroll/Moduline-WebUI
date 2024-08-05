@@ -81,11 +81,44 @@ input:checked + .slider:before {
 .topnav {
 	display: flex;
 	flex-direction: row;
-	/* background: gray; */
+    flex-wrap: wrap;
+	background: gray;
 }
 
-.topnav > * {
-	margin-left: 10px;
+.logout > form > input {
+    all:unset;
+    display: block;
+    cursor: grab;
+    color: black;
+    border: 1px solid;
+    border-color: black;
+    background-color: lightgray;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    display: block;
+}
+
+.logout > form > input:hover {
+    background-color: orange;
+}
+
+.topnav > *:not(div) {
+    text-decoration: none;
+    color: black;
+    border: 1px solid;
+    border-color: black;
+    background-color: lightgray;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    display: block;
+}
+
+.topnav > *:hover {
+    background-color: orange;
 }
 
 .center-vert {
