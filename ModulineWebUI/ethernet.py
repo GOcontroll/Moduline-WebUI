@@ -6,7 +6,7 @@ import netifaces as ni
 from microdot import Request
 from microdot.session import Session, with_session
 
-from ModulineWebUI.go_webui import app, auth
+from ModulineWebUI.app import app, auth
 
 
 @app.get("/api/get_ethernet_mode")

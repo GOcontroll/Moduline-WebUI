@@ -4,8 +4,8 @@ import subprocess
 from microdot import Request
 from microdot.session import Session, with_session
 
+from ModulineWebUI.app import app, auth
 from ModulineWebUI.controller import get_service, set_service
-from ModulineWebUI.go_webui import app, auth
 
 
 @app.get("/api/get_wwan")

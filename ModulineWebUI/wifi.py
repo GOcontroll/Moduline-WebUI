@@ -6,8 +6,7 @@ import netifaces as ni
 from microdot import Request
 from microdot.session import Session, with_session
 
-from ModulineWebUI.controller import get_service, set_service
-from ModulineWebUI.go_webui import app, auth
+from ModulineWebUI.app import app, auth
 
 
 @app.get("/api/get_wifi")
@@ -42,7 +41,7 @@ async def set_wifi(req: Request, session: Session):
 @auth
 async def set_wifi_type(req: Request, session: Session):
     """Set the wifi type, AP or receiver, request is a string containing 'ap' or 'wifi'"""
-    wifi_type = req.json["new_type"]
+    wifi_type: str = req.json["new_type"]
     # to make the switch permanent all wifi connections need to have their autoconnect settings altered
     # so all wifi connections need to be gathered
     try:

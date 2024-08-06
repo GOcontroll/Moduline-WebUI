@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import hashlib
 import ipaddress
 import os
 import random
@@ -7,55 +8,21 @@ import ssl
 import string
 import subprocess
 import sys
-from functools import wraps
 
-from microdot import Microdot, Request, Response, redirect, send_file
+from microdot import Request, redirect, send_file
 from microdot.session import Session, with_session
 
-tokens = []
-app = Microdot()
-Session(
+from ModulineWebUI.app import (
     app,
-    secret_key="".join(
-        random.SystemRandom().choice(string.ascii_uppercase + string.digits)
-        for _ in range(10)
-    ),
-)  # generate new session key when the server is restarted
-Response.default_content_type = "text/html"
+    auth,
+    authenticate_token,
+    register_token,
+    remove_token,
+)
 
-
-#########################################################################################################
-# auth
-
-
-def authenticate_token(token: str) -> bool:
-    try:
-        tokens.index(token)
-        return True
-    except ValueError:
-        return False
-
-
-def register_token(token: str):
-    tokens.append(token)
-
-
-def remove_token(token: str):
-    try:
-        tokens.remove(token)
-    except ValueError:
-        pass
-
-
-def auth(func):
-    @wraps(func)
-    async def wrapper(req: Request, session: Session, *args, **kwargs):
-        if not authenticate_token(session.get("token")):
-            return redirect("/")
-        return await func(req, session, *args, **kwargs)
-
-    return wrapper
-
+print(__name__)
+tokens = []
+current_passkey = ""
 
 #########################################################################################################
 # login
@@ -67,28 +34,31 @@ def auth(func):
 async def index(req: Request, session: Session):
     token = session.get("token")
     if req.method == "POST":
-        passkey = req.form.get("passkey")
-        if passkey == "test":  # TODO store passkey somewhere safe
+        passkey: str = req.form.get("passkey")
+        pass_hash = hashlib.sha256(passkey.encode())
+        passkey = pass_hash.hexdigest()
+        print(f"entered hash: {passkey}, should be: {current_passkey}")
+        if passkey == current_passkey:
             token = "".join(
                 random.SystemRandom().choice(string.ascii_uppercase + string.digits)
                 for _ in range(10)
             )  # generate new token for every new authorized session
             session["token"] = token
-            register_token(token)
+            register_token(tokens, token)
             session.save()
             return redirect("/static/home.html")
         else:
             return send_file("ModulineWebUI/login.html")
-    if token is None or not authenticate_token(token):
+    if token is None or not authenticate_token(tokens, token):
         return send_file("ModulineWebUI/login.html")
-    elif authenticate_token(token):
+    elif authenticate_token(tokens, token):
         return redirect("/static/home.html")
 
 
 @app.post("/logout")
 @with_session
 async def logout(req: Request, session: Session):
-    remove_token(session.get("token"))
+    remove_token(tokens, session.get("token"))
     session.delete()
     return redirect("/")
 
@@ -135,6 +105,16 @@ async def favicon(request: Request):
 
 #########################################################################################################
 
+
+def parse_boolean(boolean: str) -> bool:
+    if boolean.lower() in ["y", "yes", "true"]:
+        return True
+    elif boolean.lower() in ["n", "no", "false"]:
+        return False
+    else:
+        raise ValueError
+
+
 USAGE = """
 go-webui V0.0.1
 
@@ -146,6 +126,7 @@ options:
 -sslgen             generate a new self signed ssl key/certificate to use
 -sslkey path        give a path to an existing sslkey to use
 -sslcert path       give a path to an existing sslcert to use
+-passkey passkey    pas in a passkey to use to log in
 
 default ip = 127.0.0.1
 default port = 5000
@@ -162,15 +143,38 @@ if __name__ == "__main__":
     from ModulineWebUI.wifi import *
     from ModulineWebUI.wwan import *
 
+    conf = {}
+    try:
+        with open("/etc/go_webui.conf", "r") as conf_file:
+            for line in conf_file.readlines():
+                option = line.split("=", 1)
+                if len(option) == 2:
+                    conf[option[0].strip().lower()] = option[1].strip()
+    except:
+        print(
+            "missing configuration file /etc/go_webui.conf, trying with arguments only"
+        )
+    # global current_passkey
+    ip = conf.get("ip", "127.0.0.1")
+    port = conf.get("port", 5000)
+    sslg = conf.get("ssl_gen", "false")
+    sslc = conf.get("ssl_cert", None)
+    sslk = conf.get("ssl_key", None)
+    current_passkey = conf.get("pass_hash", "")
+
+    try:
+        sslg = parse_boolean(sslg)
+    except ValueError:
+        print("""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
+it should be set to yes/no or true/false.
+continueing with the default which is false""")
+        sslg = False
+
     # parse command line arguments
     args = iter(sys.argv)
     # skip the run argument
     next(args)
-    ip = "127.0.0.1"
-    port = 5000
-    sslk = None
-    sslc = None
-    sslg = False
+
     for arg in args:
         if arg == "-a":
             ip = next(args)
@@ -200,6 +204,14 @@ if __name__ == "__main__":
                 exit(-1)
         elif arg == "-sslgen":
             sslg = True
+        elif arg == "-passkey":
+            m = hashlib.sha256(next(args).encode())
+            current_passkey = m.hexdigest()
+            print(f"set password hash to {current_passkey}")
+    if current_passkey == "":
+        print("""No passkey found in /etc/go_webui.conf or in the arguments.
+A passkey must be given at all times""")
+        exit(-1)
 
     # add path for the error module
     sys.path.append("/usr/moduline/python")

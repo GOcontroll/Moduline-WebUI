@@ -5,7 +5,7 @@ import subprocess
 from microdot import Request, send_file
 from microdot.session import Session, with_session
 
-from ModulineWebUI.go_webui import app, auth
+from ModulineWebUI.app import app, auth
 
 
 # services
