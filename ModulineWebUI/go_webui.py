@@ -7,6 +7,8 @@ import ssl
 import subprocess
 import sys
 
+import pkg_resources
+
 from ModulineWebUI.app import app, set_passkey
 from ModulineWebUI.conf import create_default_conf, get_conf
 
@@ -22,9 +24,9 @@ def parse_boolean(boolean: str) -> bool:
         raise ValueError
 
 
-USAGE = """
-go-webui V0.0.1
-
+USAGE = f"""
+go-webui V{pkg_resources.require("ModulineWebUI")[0].version}
+for permanent settings see /etc/go_webui.conf
 go-webui [options]
 
 options:
