@@ -26,7 +26,7 @@ def parse_boolean(boolean: str) -> bool:
 
 USAGE = f"""
 go-webui V{pkg_resources.require("ModulineWebUI")[0].version}
-for permanent settings see /etc/go_webui.conf
+using the options overrides the settings in /etc/go_webui.conf
 go-webui [options]
 
 options:
@@ -35,23 +35,28 @@ options:
 -sslgen             generate a new self signed ssl key/certificate to use
 -sslkey path        give a path to an existing sslkey to use
 -sslcert path       give a path to an existing sslcert to use
--passkey passkey    pas in a passkey to use to log in
+-passkey passkey    pass in a passkey to use to log in
+-h                  display this text and exit
 
 default ip = 127.0.0.1
 default port = 5000
+default passkey (if /etc/go_webui.conf gets generated) = Moduline
 
 examples:
-go-webui -a 0.0.0.0 -p 7500
-go-webui -sslcert cert.pem -sslkey key.pen
+go-webui
+go-webui -a 0.0.0.0 -p 7500 -passkey test
+go-webui -sslcert cert.pem -sslkey key.pem
 go-webui -a 0.0.0.0 -p 7500 -sslgen
 """
 
 if __name__ == "__main__":
+    # register the routes from these modules
     from ModulineWebUI.controller import *
     from ModulineWebUI.ethernet import *
     from ModulineWebUI.wifi import *
     from ModulineWebUI.wwan import *
 
+    # process /etc/go_webui.conf
     conf = {}
     try:
         conf = get_conf()
@@ -77,13 +82,46 @@ if __name__ == "__main__":
     sslk = conf.get("ssl_key", "")
     current_passkey = conf.get("pass_hash", "")
 
+    # validate values read from /etc/go_webui.conf
+    try:
+        ipaddress.IPv4Address(ip)
+    except ValueError:
+        print(
+            f"Invalid IP configured in /etc/go_webui.conf: {ip}, continuing with default 127.0.0.1"
+        )
+        ip = "127.0.0.1"
+
+    try:
+        port = int(port)
+    except ValueError:
+        print(
+            f"Invalid port configured in /etc/go_webui.conf: {port}, continuing with default 5000"
+        )
+        port = 5000
+
     try:
         sslg = parse_boolean(sslg)
     except ValueError:
-        print("""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
-it should be set to yes/no or true/false.
-continueing with the default which is false""")
+        print(f"""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
+it should be set to [y]es/[n]o or true/false, not {sslg}.
+continuing with the default which is false""")
         sslg = False
+    if sslc != "":
+        if not os.path.exists(sslc):
+            print(
+                f"Could not find ssl certificate at {os.path.abspath(sslc)}, continuing without ssl"
+            )
+            sslc = ""
+    if sslk != "":
+        if not os.path.exists(sslk):
+            print(
+                f"Could not find ssl key at {os.path.abspath(sslk)}, continuing without ssl"
+            )
+            sslk = ""
+
+    # current_passkey gets check after parsing arguments
+
+    # process cli arguments
 
     # parse command line arguments
     args = iter(sys.argv)
@@ -109,22 +147,33 @@ continueing with the default which is false""")
             exit(0)
         elif arg == "-sslkey":
             sslk = next(args)
+            if not os.path.exists(sslk):
+                print(f"Could not find ssl key at {os.path.abspath(sslk)}")
+                exit(-1)
         elif arg == "-sslcert":
             sslc = next(args)
+            if not os.path.exists(sslc):
+                print(f"Could not find ssl certificate at {os.path.abspath(sslc)}")
+                exit(-1)
         elif arg == "-sslgen":
             sslg = True
         elif arg == "-passkey":
             m = hashlib.sha256(next(args).encode())
             current_passkey = m.hexdigest()
             # print(f"set password hash to {current_passkey}")
+
+    # if no passkey found in /etc/go_webui.conf or passed in through args, exit
     if current_passkey == "":
         print("""No passkey found in /etc/go_webui.conf or in the arguments.
 A passkey must be given at all times""")
         exit(-1)
+
+    # register the passkey in the app module
     set_passkey(current_passkey)
     # add path for the error module
     sys.path.append("/usr/moduline/python")
 
+    # run the correct version of the server
     if sslg:
         subprocess.run(
             [
@@ -150,15 +199,9 @@ A passkey must be given at all times""")
         exit(0)
 
     if sslc != "" and sslk != "":
-        if not os.path.exists(sslc):
-            print(f"Could not find entered certificate at {sslc}")
-        else:
-            if not os.path.exists(sslk):
-                print(f"Could not find entered key at {sslk}")
-            else:
-                sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-                sslctx.load_cert_chain(sslc, sslk)
-                app.run(host=ip, port=port, ssl=sslctx)
-                exit(0)
+        sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        sslctx.load_cert_chain(sslc, sslk)
+        app.run(host=ip, port=port, ssl=sslctx)
+        exit(0)
 
     app.run(host=ip, port=port)
