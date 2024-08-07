@@ -56,7 +56,7 @@ async function set_passkey() {
             console.log(response.deets);
             return;
         }
-        result.innerText = "Succesfully changed the passkey"
+        result.innerText = "Succesfully changed the passkey!"
         result.className = "ok"
         return
     } catch (err) {

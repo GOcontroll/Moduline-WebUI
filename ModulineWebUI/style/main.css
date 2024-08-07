@@ -161,3 +161,11 @@ body {
     align-self: center;
     margin-top: 4px;
 }
+
+.fail {
+    color: red;
+}
+
+.ok {
+    color: green;
+}
