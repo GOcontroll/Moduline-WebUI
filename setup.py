@@ -24,7 +24,7 @@ setup(
         "ModulineWebUI/js",
         "ModulineWebUI/style",
     ],
-    package_data={"": ["*.js", "*.html", "*.css", "*.jpg", "*.ico"]},
+    package_data={"": ["*.js", "*.html", "*.css", "*.jpg", "*.ico", "*.png"]},
     entry_points={
         "console_scripts": [
             "go-webui = ModulineWebUI.__main__:execute_script",
