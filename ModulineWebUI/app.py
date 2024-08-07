@@ -98,19 +98,23 @@ async def logout(req: Request, session: Session):
     return redirect("/")
 
 
-@app.post("/set_passkey")
+@app.post("/api/set_passkey")
 @with_session
 @auth
 async def set_passkey_route(req: Request, session: Session):
     data: dict = req.json
     pass_hash = hashlib.sha256(data["passkey"].encode())
     passkey = pass_hash.hexdigest()
-    set_passkey(passkey)
-
     try:
         modify_conf("pass_hash", passkey)
     except FileNotFoundError or PermissionError as ex:
-        return json.dumps({"err": f"Could not permanently modify the passkey\n{ex}"})
+        return json.dumps(
+            {
+                "err": "Could not save the new passkey, passkey unchanged",
+                "deets": f"{ex}",
+            }
+        )
+    set_passkey(passkey)
     return json.dumps({})
 
 

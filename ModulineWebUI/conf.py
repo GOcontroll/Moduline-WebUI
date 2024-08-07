@@ -31,6 +31,10 @@ pass_hash={default_hash}""")
 
 
 def modify_conf(key: str, val: str):
+    try:
+        conf = get_conf()
+    except FileNotFoundError:
+        create_default_conf()
     conf = get_conf()
     conf[key] = val
     write_conf(conf)
