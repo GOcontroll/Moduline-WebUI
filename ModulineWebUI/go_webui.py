@@ -196,12 +196,11 @@ A passkey must be given at all times""")
         sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         sslctx.load_cert_chain("cert.pem", "key.pem")
         app.run(host=ip, port=port, ssl=sslctx)
-        exit(0)
 
-    if sslc != "" and sslk != "":
+    elif sslc != "" and sslk != "":
         sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         sslctx.load_cert_chain(sslc, sslk)
         app.run(host=ip, port=port, ssl=sslctx)
-        exit(0)
 
-    app.run(host=ip, port=port)
+    else:
+        app.run(host=ip, port=port)
