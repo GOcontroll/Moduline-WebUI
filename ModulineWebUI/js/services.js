@@ -1,4 +1,4 @@
-
+//If this list is changed also change it in controller.py
 const services_list = [
 	["ssh", "SSH", "OpenSSH service, to login over a network"],
 	["go-simulink", "Simulink", "Used to automatically start a simulink model"],
@@ -13,12 +13,12 @@ const services_list = [
 async function set_service(service) {
 	//get what the next state of wifi should be
 	let set_state = {};
-	let cb = document.getElementById("service"+service);
-    //current state of checked is after it was clicked, so the state it needs to become
+	let cb = document.getElementById("service" + service);
+	//current state of checked is after it was clicked, so the state it needs to become
 	set_state.new_state = cb.checked;
 	set_state.service = services_list[service][0];
 	//try to make it a reality
-	try{
+	try {
 		const resp = await post_json("/api/set_service", set_state);
 		if (resp.err != undefined) {
 			//server failed to toggle wifi
@@ -27,34 +27,38 @@ async function set_service(service) {
 		} else {
 			cb.checked = resp.new_state;
 		}
-	} catch(err) {
+	} catch (err) {
 		alert("Could not toggle " + services_list[service][0] + ":\n" + err);
 		cb.checked = !set_state.new_state;
 	}
 }
 
 async function get_service(service, index) {
-	try{
+	try {
 		const promise = post_json("/api/get_service", service[0]);
 		const service_templ = document.getElementById("service");
 
 		const new_service = service_templ.content.cloneNode(true);
 		let p = new_service.querySelector("p");
 		p.textContent = service[1];
-        let tooltip = new_service.querySelector(".tooltiptext");
-        tooltip.textContent = service[2];
+		let tooltip = new_service.querySelector(".tooltiptext");
+		tooltip.textContent = service[2];
 		let cb = new_service.querySelector("input");
 		cb.id = "service" + index;
-		cb.setAttribute("onclick", "set_service("+index+")");
+		cb.setAttribute("onclick", "set_service(" + index + ")");
 		const resp = await promise;
+		if (resp.err) {
+			alert("Could not get the state of " + service[0] + ":\n" + resp.err);
+			return
+		}
 		cb.checked = resp.state
 		return new_service
-	} catch(err) {
+	} catch (err) {
 		alert("Could not get the state of " + service[0] + ":\n" + err);
 	}
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
 	const services = document.getElementById("services");
 	services.textContent = ""
 	var promises = [];
