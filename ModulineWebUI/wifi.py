@@ -7,13 +7,14 @@ from microdot import Request
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
+from ModulineWebUI.controller import get_service, set_service
 
 
 @app.get("/api/get_wifi")
 @with_session
 @auth
 async def get_wifi(req: Request, session: Session):
-    return json.dumps({"state": not os.path.isfile("/etc/modprobe.d/brcmfmac.conf")})
+    return json.dumps({"state": get_service("go-wifi")})
 
 
 @app.post("/api/set_wifi")
@@ -25,12 +26,11 @@ async def set_wifi(req: Request, session: Session):
     state = req.json["new_state"]
     try:
         if state:
-            os.remove("/etc/modprobe.d/brcmfmac.conf")
-            subprocess.run(["/sbin/modprobe", "brcmfmac"]).check_returncode()
+            set_service("go-wifi", state)
         else:
+            # stopping wifi requires a little bit more effort
+            subprocess.run(["systemctl", "disable", "go-wifi"]).check_returncode()
             subprocess.run(["/sbin/modprobe", "-r", "brcmfmac"]).check_returncode()
-            with open("/etc/modprobe.d/brcmfmac.conf", "x") as file:
-                file.write("blacklist brcmfmac")
         return json.dumps({"state": state})
     except Exception as ex:
         return json.dumps({"err": f"could not switch state to {state}\n{ex}"})
