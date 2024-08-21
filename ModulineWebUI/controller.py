@@ -7,6 +7,19 @@ from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
 
+# keep this list up to date with index 0 of the list in services.js
+# this list limits the services that can be accessed through this api
+services = [
+    "ssh",
+    "go-simulink",
+    "nodered",
+    "go-bluetooth",
+    "go-upload-server",
+    "go-auto-shutdown",
+    "gadget-getty@ttyGS0",
+    "getty@ttymxc2",
+]
+
 
 # services
 def get_service(service: str) -> bool:
@@ -18,7 +31,10 @@ def get_service(service: str) -> bool:
 @auth
 async def get_service_route(req: Request, session: Session):
     service: str = req.json
-    return json.dumps({"state": get_service(service)})
+    if service in services:
+        return json.dumps({"state": get_service(service)})
+    else:
+        return json.dumps({"err": "Invalid service"})
 
 
 def set_service(service: str, new_state: bool) -> bool:
@@ -41,7 +57,10 @@ async def set_service_route(req: Request, session: Session):
     data = req.json
     new_state: bool = data["new_state"]
     service: str = data["service"]
-    return json.dumps({"new_state": set_service(service, new_state)})
+    if service in services:
+        return json.dumps({"new_state": set_service(service, new_state)})
+    else:
+        return json.dumps({"err": "Invalid service"})
 
 
 # simulink
