@@ -71,7 +71,7 @@ async def get_sim_ver(req: Request, session: Session):
     try:
         with open("/usr/simulink/CHANGELOG.md", "r") as changelog:
             head = changelog.readline()
-        return json.dumps({"version": head.split(" ")[1]})
+        return json.dumps({"version": head.split(" ")[1].strip()})
     except Exception as ex:
         return json.dumps({"err": f"No changelog found\n{ex}"})
 
@@ -99,7 +99,7 @@ def set_bt_name(name: str):
 async def get_hardware(req: Request, session: Session):
     try:
         with open("/sys/firmware/devicetree/base/hardware", "r") as hardware_file:
-            return json.dumps({"hardware": hardware_file.read()})
+            return json.dumps({"hardware": hardware_file.read().strip()})
     except Exception as ex:
         return json.dumps({"err": f"No hardware description found\n{ex}"})
 
@@ -110,11 +110,11 @@ async def get_hardware(req: Request, session: Session):
 async def get_software(req: Request, session: Session):
     try:
         with open("/version.txt", "r") as file:
-            return json.dumps({"version": file.readline()})
+            return json.dumps({"version": file.readline().strip()})
     except:
         try:
             with open("/root/version.txt", "r") as file:
-                return json.dumps({"version": file.readline()})
+                return json.dumps({"version": file.readline().strip()})
         except Exception as ex:
             return json.dumps({"err": f"No version file found\n{ex}"})
 
