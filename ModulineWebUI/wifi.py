@@ -29,7 +29,7 @@ async def set_wifi(req: Request, session: Session):
             set_service("go-wifi", state)
         else:
             # stopping wifi requires a little bit more effort
-            subprocess.run(["systemctl", "disable", "go-wifi"]).check_returncode()
+            set_service("go-wifi", state)
             subprocess.run(["/sbin/modprobe", "-r", "brcmfmac"]).check_returncode()
         return json.dumps({"state": state})
     except Exception as ex:
