@@ -26,7 +26,7 @@ ssl_gen=false
 ssl_cert=
 #set ssl_key with a path to your ssl key, does nothing if ssl_gen is true
 ssl_key=
-#set pass_hash with a sha256 of your passkey, the default value is the has of "Moduline"
+#set pass_hash with a sha256 of your passkey, the default value is the hash of "Moduline"
 pass_hash={default_hash}""")
 
 
