@@ -6,11 +6,11 @@ async function delete_codes() {
 			errors.push(cb.id)
 		}
 	}
-	if (errors.length){
+	if (errors.length) {
 		try {
 			const res = await post_json("/api/delete_errors", errors);
 			await update_errors();
-		} catch(err) {
+		} catch (err) {
 			console.log(err);
 		}
 	}
@@ -31,21 +31,27 @@ async function update_errors() {
 		if (errors_request.err) {
 			return;
 		}
-		for ( const fault of errors_request) {
+		for (const fault of errors_request) {
 			format_fault(fault);
 		}
-	} catch(err) {
+	} catch (err) {
 		console.log(err);
 	}
 }
 
 function format_fault(fault) {
 	var desc = "";
+	var file = "";
 	if (!fault.fc) {
 		return "";
 	}
 	if (fault.desc) {
 		desc = fault.desc;
+	}
+	if (fault.file) {
+		file = fault.file;
+	} else {
+		file = fault.fc;
 	}
 	const fault_codes = document.getElementById("fault-codes");
 	const fault_templ = document.getElementById("fault-code");
@@ -54,12 +60,12 @@ function format_fault(fault) {
 	let td = new_row.querySelectorAll("td");
 	td[0].textContent = fault.fc;
 	td[1].textContent = desc;
-	
+
 	let cb = new_row.querySelector("input")
-	cb.id = fault.fc;
+	cb.id = file;
 	fault_codes.appendChild(new_row);
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
 	await update_errors();
 }, false);
