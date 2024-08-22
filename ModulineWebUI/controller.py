@@ -147,10 +147,9 @@ async def get_errors(req: Request, session: Session):
     except:
         output = []
         try:
-            for i in range(1, 6):
-                files = os.listdir(f"/usr/mem-diag/{i}")
-                for file in files:
-                    output.append({"fc": file})
+            files = os.listdir("/usr/mem-diag")
+            for file in files:
+                output.append({"fc": file})
             return json.dumps(output)
         except Exception as ex:
             return json.dumps({"err": f"Could not get errors\n{ex}"})
@@ -163,8 +162,7 @@ async def delete_errors(req: Request, session: Session):
     errors: "list[str]" = req.json
     try:
         for file in errors:
-            severity = file[0]
-            os.remove(f"/usr/mem-diag/{severity}/{file}")
+            os.remove(f"/usr/mem-diag/{file}")
             return json.dumps({})
     except Exception as ex:
         return json.dumps({"err": f"Could not delete all requested errors\n{ex}"})
