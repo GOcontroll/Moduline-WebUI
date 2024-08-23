@@ -1,171 +1,350 @@
+:root {
+  --background-dark: #5C5C5C;
+  --background-accent-dark: #474747;
+  --accent-color-corp: #E94F24;
+  --prime-color-corp: #3B3B3B;
+  --border-black-dark: #1F1F1F;
+  --text-color-dark: #F1FFFA;
+  --button-background: #EE7958;
+  --button-text-color: black;
+  --button-background-focus: var(--accent-color-corp);
+  --button-text-color-focus: black;
+  --button-background-hover: var(--accent-color-corp);
+  --button-text-color-hover: black;
+  --error-background: #b10000;
+}
+
+@font-face {
+  font-family: NotoSans;
+  src: url(/assets/NotoSans-VariableFont_wdth,wght.ttf);
+  font-style: normal;
+}
+
+@font-face {
+  font-family: NotoSans;
+  src: url(/ModulineWebUI/assets/NotoSans-Italic-VariableFont_wdth\,wght.ttf);
+  font-style: italic;
+}
+
+* {
+  font-family: NotoSans;
+  color: var(--text-color-dark);
+}
+
+
+body {
+  margin: 0;
+  background-color: var(--background-dark);
+}
+
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    align-content: end;
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  align-content: end;
 }
 
 /* Hide default HTML checkbox */
 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 /* The slider */
 .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 34px;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--accent-color-corp);
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
 }
 
 .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 50%;
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--background-dark);
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
 }
 
 input:checked+.slider {
-    background-color: #2196F3;
+  background-color: #2196F3;
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #2196F3;
 }
 
 input:checked+.slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
 }
 
-.tooltip {
-    position: relative;
-    display: inline-block;
+#header-main-nav-decorator {
+  height: 50px;
+  /* gray line behind menu bar */
+  background-image: linear-gradient(var(--prime-color-corp),
+      var(--prime-color-corp));
+  background-repeat: no-repeat;
+  background-size: 100% 25px;
+  background-position: 0 center;
+  /* display: flex; */
+  padding: 10px;
+  justify-content: center;
 }
 
-/* Tooltip text */
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 240px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    position: absolute;
-    z-index: 1;
-    top: -5px;
-    right: -245px;
+#header-main-nav {
+  margin: auto;
 }
 
-.tooltip:hover .tooltiptext {
-    visibility: visible;
+#header-main-menu {
+  all: unset;
+  margin: 0;
+  display: flex;
+  padding: 0;
+  justify-content: center;
 }
 
-.topnav {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    background: gray;
+#header-main-menu>*:hover {
+  background-color: var(--accent-color-corp);
+  color: var(--button-text-color-hover);
 }
 
-.logout>form>input {
-    all: unset;
-    display: block;
-    cursor: grab;
-    color: black;
-    border: 1px solid;
-    border-color: black;
-    background-color: lightgray;
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    display: block;
+menu>li {
+  all: unset;
+  list-style: none;
+  cursor: pointer;
+  width: 120px;
+  background-color: var(--background-dark);
+  border: var(--border-black-dark) solid 1px;
+  transition-duration: 0.5s;
+  text-align: center;
+  padding: 10px;
 }
 
-.logout>form>input:hover {
-    background-color: orange;
+menu>li:not(:first-child):not(.logout) {
+  border-left: none;
 }
 
-.topnav>*:not(div) {
-    text-decoration: none;
-    color: black;
-    border: 1px solid;
-    border-color: black;
-    background-color: lightgray;
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    display: block;
+menu>li>a {
+  text-decoration: none;
+  color: inherit;
 }
 
-.topnav>*:hover {
-    background-color: orange;
+.logout {
+  padding: 0;
+  border: none;
 }
 
-.center-vert {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.logout form, .logout input{
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  border: none;
 }
 
-.row {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 500px;
+.logout input{
+  background-color: var(--button-background);
+  color: var(--button-text-color);
+  font-weight: 600;
+  cursor: pointer;
+  border: var(--border-black-dark) solid 1px;
+  transition-duration: 0.5s;
+}
 
+.logout input:hover{
+  background-color: var(--accent-color-corp);
+}
+
+.content-section {
+  padding: 20px 35px;
+  border: var(--border-black-dark) solid 1px;
+  background: #3b3b3b;
+  box-shadow: 1px 2px 8px 1px var(--border-black-dark);
+  max-width: 600px;
+  margin: auto;
+}
+
+#passkey-change-field {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: var(--background-accent-dark) solid 3px;
+}
+
+#passkey-change-field>label {
+  margin: auto 0 auto 0;
+  text-align: left;
+}
+
+#passkey-change-field .row {
+  margin: 5px 0 5px 0;
 }
 
 .row>input {
-    height: fit-content;
-    align-self: center;
+  height: fit-content;
+  align-self: center;
+  background-color: var(--background-accent-dark);
+  border: none;
 }
 
-body {
-    background-color: white;
-    font-family: sans-serif;
-    margin-left: 10px;
+section .row {
+  max-height: 40px;
+}
+
+body>main>section>div>p {
+  margin: auto 0;
+  padding: 5px 0;
+}
+
+#passkey-change-field div>input:not(:placeholder-shown),
+.input-field input:not(:placeholder-shown) {
+  background-color: var(--background-dark);
+  border: var(--border-black-dark) solid 1px;
+}
+
+#passkey-change-field div>input::placeholder,
+.input-field input:not(:placeholder-shown) {
+  color: var(--border-black-dark);
+}
+
+#passkey-change-field div>input:focus,
+.input-field input:focus {
+  background-color: var(--background-dark);
+  box-shadow: 0 0 2px 1px var(--accent-color-corp);
+  border: none;
+  outline-style: none;
+}
+
+.center-vert {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.row {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-width: 500px;
 }
 
 #vis_pass {
-    all: unset;
-    position: absolute;
-    align-self: center;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
+  all: unset;
+  position: absolute;
+  align-self: center;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 #vis_pass>img {
-    height: 15px;
-    align-self: center;
-    margin-top: 4px;
+  height: 15px;
+  align-self: center;
+  margin-top: 4px;
 }
 
 .fail {
-    color: red;
+  box-shadow: 1px 2px 8px 1px var(--border-black-dark);
+  padding: 10px;
+  background-color: var(--error-background);
 }
 
 .ok {
-    color: green;
+  color: green;
+}
+
+
+/* Button  */
+.orange-button {
+  padding: 10px 20px;
+  background: var(--button-background);
+  color: var(--button-text-color);
+  border: none;
+  font-weight: 600;
+  margin: 10px 0;
+  transition-duration: 0.5s;
+}
+
+.orange-button:hover {
+  background-color: var(--accent-color-corp);
+}
+
+
+/* Tooltip text */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 240px;
+  background-color: var(--background-dark);
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  right: -245px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+
+/* login page */
+.logo {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+#login-form{
+  padding: 10px 15px;
+  width: 300px;
+  height: 200px;
+}
+
+#login-form>h2{
+  text-align: center;
+}
+
+#login-form form{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#login-form form>div {
+  padding: 10px 20px;
+  margin: 20px auto;
+}
+
+#login-form form>div>input {
+  width: 110px;
+  height: 40px;
+  margin: auto;
+  color: var(--border-black-dark);
+}
+
+img {
+  width: 100%;
 }

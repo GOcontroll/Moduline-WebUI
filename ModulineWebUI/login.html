@@ -1,37 +1,62 @@
 <!doctype html>
 <html>
-	<head>
-    	<title>Log in</title>
-		<meta charset="UTF-8">
-		<link rel="stylesheet" href="/style/login.css">
-		<link rel="stylesheet" href="/style/main.css">
-	</head>
-	<body>
-		<div style='display:flex; flex-direction:row; justify-content:center; height: 100%; overflow:auto'>
-			<div style='display:flex; flex-direction:column; justify-content:center'>
-				<a href='https://gocontroll.com'>
-					<div style='display:flex; flex-direction:row; justify-content:center'>
-						<img src='/assets/GOcontroll_logo_nontransparent.jpg' alt='GOcontroll logo' style='max-width:50%; padding-bottom:50px'/>
-					</div>
-				</a>
-				<div style='display:flex; flex-direction:row; justify-content:center'>
-					<div style='background:gray; padding:20px; display:flex; flex-direction: column; justify-content:space-evenly'>
-						<div style='display:flex; flex-direction:row; justify-content:center'>
-							<h1>Log in</h1>
-						</div>
-						<form method='post'>
-							<div style='display:flex; flex-direction:row; justify-content:space-between'>
-								<label for='passkey' style='padding-right:10px'>Passkey</label>
-								<input type='password' id='passkey' name='passkey' value='' autofocus>
-							</div>
-							<br>
-							<div style='display:flex; flex-direction:row; justify-content:center'>
-								<input type='submit' value='log in'>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
+
+<head>
+  <title>Log in</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/style/login.css">
+  <link rel="stylesheet" href="/style/main.css">
+</head>
+
+<body>
+  <main>
+    <section>
+      <article>
+        <figure id="logo">
+          <img src="/assets/GOcontroll_logo.png" alt="GOcontroll logo">
+        </figure>
+      </article>
+      <section class="content-section" id="login-form">
+        <h2>Log in</h2>
+        <article>
+          <form class="input-field" action="" method="post">
+            <label for='passkey' style='padding-right:10px'>Passkey</label>
+            <input type='password' id='passkey' name='passkey' value='' autofocus>
+            <div id="login-button">
+              <input type='submit' value='log in'>
+            </div>
+          </form>
+        </article>
+      </section>
+    </section>
+  </main>
+  <!-- <div style='display:flex; flex-direction:row; justify-content:center; height: 100%; overflow:auto'>
+    <div style='display:flex; flex-direction:column; justify-content:center'>
+      <a href='https://gocontroll.com'>
+        <div style='display:flex; flex-direction:row; justify-content:center'>
+          <img src='/ModulineWebUI/assets/GOcontroll_logo.png' alt='GOcontroll logo'
+            style='max-width:50%; padding-bottom:50px' />
+        </div>
+      </a>
+      <div style='display:flex; flex-direction:row; justify-content:center'>
+        <div style='background:gray; padding:20px; display:flex; flex-direction: column; justify-content:space-evenly'>
+          <div style='display:flex; flex-direction:row; justify-content:center'>
+            <h1>Log in</h1>
+          </div>
+          <form method='post'>
+            <div style='display:flex; flex-direction:row; justify-content:space-between'>
+              <label for='passkey' style='padding-right:10px'>Passkey</label>
+              <input type='password' id='passkey' name='passkey' value='' autofocus>
+            </div>
+            <br>
+            <div style='display:flex; flex-direction:row; justify-content:center'>
+              <input type='submit' value='log in'>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</body>
+
 </html>
