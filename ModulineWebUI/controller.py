@@ -163,9 +163,9 @@ async def delete_errors(req: Request, session: Session):
     try:
         for file in errors:
             os.remove(f"/usr/mem-diag/{file}")
-            return json.dumps({})
     except Exception as ex:
         return json.dumps({"err": f"Could not delete all requested errors\n{ex}"})
+    return json.dumps({})
 
 
 # modules
