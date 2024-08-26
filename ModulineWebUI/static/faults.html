@@ -1,50 +1,76 @@
 <!doctype html>
 <html>
-  <head>
-	<title>GOcontroll Faults</title>
-    <meta charset="UTF-8">
-	<script src="/js/common.js"></script>
-	<script src="/js/faults.js"></script>
-	<link rel="stylesheet" href="/style/main.css">
-	<link rel="stylesheet" href="/style/faults.css">
-  </head>
-  <body>
-	<div class="topnav">
-		<a href="/static/home.html">Home</a>
-		<a href="/static/services.html">Services</a>
-		<a href="/static/wifi.html">Wi-Fi Settings</a>
-		<a href="/static/wwan.html">WWAN Settings</a>
-		<div class="logout">
-			<form action="/logout" method="post">
-				<input type="submit" name="logout" value="Logout"/>
-			</form>
-		</div>
-	</div>
-	<div class="body">
-		<h1>Fault codes</h1>
-		<table id="fault-table">
-			<thead>
-				<tr>
-					<td>Fault code</td>
-					<td>Description</td>
-					<td></td>
-				</tr>
-			</thead>
-			<tbody id="fault-codes">
-			</tbody>
-		</table>
-		<button onclick="select_all_codes()">Select all</button>
-		<button onclick="delete_codes()">Delete selected codes</button>
-	</div>
-  </body>
+
+<head>
+  <title>GOcontroll Faults</title>
+  <meta charset="UTF-8">
+  <script src="/js/common.js"></script>
+  <script src="/js/faults.js"></script>
+  <link rel="stylesheet" href="/style/main.css">
+  <link rel="stylesheet" href="/style/faults.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+  <header>
+    <div id="header-main-nav-decorator">
+      <nav id="header-main-nav" class="topnav">
+        <menu id="header-main-menu">
+          <li>
+            <a href="/static/home.html">Home</a>
+          </li>
+          <li>
+            <a href="/static/services.html">Services</a>
+          </li>
+          <li>
+            <a href="/static/wifi.html">Wi-Fi Settings</a>
+          </li>
+          <li>
+            <a href="/static/wwan.html">WWAN Settings</a>
+          </li>
+          <li class="active_menu_page_button">
+            <a href="/static/faults.html">Faults</a>
+          </li>
+          <li class="logout">
+            <form action="/logout" method="post">
+              <input type="submit" name="logout" value="Logout" />
+            </form>
+          </li>
+        </menu>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="content-section">
+      <div class="body">
+        <h1>Fault codes</h1>
+        <table id="fault-table">
+          <thead>
+            <tr>
+              <td>Fault code</td>
+              <td>Description</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody id="fault-codes">
+          </tbody>
+        </table>
+        <button class="orange-button" onclick="select_all_codes()">Select all</button>
+        <button class="orange-button" onclick="delete_codes()">Delete selected codes</button>
+      </div>
+    </section>
+  </main>
+</body>
+
 </html>
 
 <template id="fault-code">
-	<tr>
-		<td class="fault-code-fc"></td>
-		<td class="fault-code-desc"></td>
-		<td>
-			<input class="fault-code-sel" type="checkbox">
-		</td>
-	</tr>
+  <tr>
+    <td class="fault-code-fc"></td>
+    <td class="fault-code-desc"></td>
+    <td>
+      <input class="fault-code-sel" type="checkbox">
+    </td>
+  </tr>
 </template>

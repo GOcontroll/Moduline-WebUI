@@ -1,51 +1,78 @@
 <!doctype html>
 <html>
-  <head>
-    <title>GOcontroll Wi-Fi</title>
-    <meta charset="UTF-8">
+
+<head>
+	<title>GOcontroll Wi-Fi</title>
+	<meta charset="UTF-8">
 	<script src="/js/wifi.js"></script>
 	<script src="/js/common.js"></script>
 	<link rel="stylesheet" href="/style/wifi.css">
 	<link rel="stylesheet" href="/style/main.css">
-  </head>
-  <body>
-	<div class="topnav">
-		<a href="/static/home.html">Home</a>
-		<a href="/static/services.html">Services</a>
-		<a href="/static/wwan.html">WWAN Settings</a>
-		<a href="/static/faults.html">Faults</a>
-		<div class="logout">
-			<form action="/logout" method="post">
-				<input type="submit" name="logout" value="Logout"/>
-			</form>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+	<header>
+		<div id="header-main-nav-decorator">
+			<nav id="header-main-nav" class="topnav">
+				<menu id="header-main-menu">
+					<li>
+						<a href="/static/home.html">Home</a>
+					</li>
+					<li>
+						<a href="/static/services.html">Services</a>
+					</li>
+					<li class="active_menu_page_button">
+						<a href="/static/wifi.html">Wi-Fi Settings</a>
+					</li>
+					<li>
+						<a href="/static/wwan.html">WWAN Settings</a>
+					</li>
+					<li>
+						<a href="/static/faults.html">Faults</a>
+					</li>
+					<li class="logout">
+						<form action="/logout" method="post">
+							<input type="submit" name="logout" value="Logout" />
+						</form>
+					</li>
+				</menu>
+			</nav>
 		</div>
-	</div>
-	<div class="body">
-		<h1>Wi-Fi Settings</h1>
-		<div class="row">
-			<div class="center-vert">
-			<p>Wifi State:</p>
+	</header>
+	<main>
+		<section class="content-section">
+
+			<div class="body">
+				<h1>Wi-Fi Settings</h1>
+				<div class="row">
+					<div class="center-vert">
+						<p>Wifi State:</p>
+					</div>
+					<div class="center-vert">
+						<label class="switch">
+							<input id="wifi" type="checkbox" onclick="set_wifi()">
+							<span class="slider round"></span>
+						</label>
+					</div>
+				</div>
+				<div class="row">
+					<p>New Access Point name:</p>
+					<input id="ap_ssid" type="text" />
+				</div>
+				<button class="orange-button" onclick="set_ap_ssid()">Change name</button>
+				<p id="set_ap_ssid_result"></p>
+				<div class="row">
+					<p>New Access Point password:</p>
+					<input id="ap_pass" type="password" />
+					<button id="vis_pass" onclick="toggle_ap_pass()"><img src="../assets/visibility.png"></button>
+				</div>
+				<button class="orange-button" onclick="set_ap_pass()">Change password</button>
+				<p id="set_ap_pass_result"></p>
 			</div>
-			<div class="center-vert">
-				<label class="switch">
-					<input id="wifi" type="checkbox" onclick="set_wifi()">
-					<span class="slider round"></span>
-				</label>
-			</div>
-		</div>
-        <div class="row">
-            <p>New Access Point name:</p>
-            <input id="ap_ssid" type="text"/>
-        </div>
-		<button onclick="set_ap_ssid()">Change name</button>
-		<p id="set_ap_ssid_result"></p>
-        <div class="row">
-		    <p>New Access Point password:</p>
-			<input id="ap_pass" type="password"/>
-			<button id="vis_pass" onclick="toggle_ap_pass()"><img src="../assets/visibility.png"></button>
-		</div>
-		<button onclick="set_ap_pass()">Change password</button>
-		<p id="set_ap_pass_result"></p>
-	</div>
-  </body>
+		</section>
+	</main>
+</body>
+
 </html>
