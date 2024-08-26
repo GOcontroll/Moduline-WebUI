@@ -2,59 +2,60 @@
 <html>
 
 <head>
-    <title>GOcontroll Home</title>
-    <meta charset="UTF-8">
-    <script src="/js/home.js"></script>
-    <script src="/js/common.js"></script>
-    <link rel="stylesheet" href="/style/main.css">
+	<title>GOcontroll Home</title>
+	<meta charset="UTF-8">
+	<script src="/js/home.js"></script>
+	<script src="/js/common.js"></script>
+	<link rel="stylesheet" href="/style/main.css">
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="/static/services.html">Services</a>
-        <a href="/static/wifi.html">Wi-Fi Settings</a>
-        <a href="/static/wwan.html">WWAN Settings</a>
-        <a href="/static/faults.html">Faults</a>
-        <div class="logout">
-            <form action="/logout" method="post">
-                <input type="submit" name="logout" value="Logout" />
-            </form>
-        </div>
-    </div>
-    <h1>Home</h1>
-    <div class="row">
-        <p>Serial number:</p>
-        <p id="serial_number">...</p>
-    </div>
-    <div class="row">
-        <p>Controller hardware:</p>
-        <p id="controller_hardware">...</p>
-    </div>
-    <div class="row">
-        <p>Controller software:</p>
-        <p id="controller_software">...</p>
-    </div>
-    <div class="row">
-        <p>Simulink Model version:</p>
-        <p id="simulink_version">...</p>
-    </div>
-    <form action="/api/GOcontroll_Linux.a2l" method="get">
-        <input type="submit" name="download" value="Download a2l" />
-    </form>
-    <div>
-        <div class="row">
-            <label for="passkey1">New passkey</label>
-            <input type="password" id="passkey1" name="passkey1">
-            <button id="vis_pass" onclick="toggle_pass()"><img src="../assets/visibility.png"></button>
-        </div>
-        <div class="row">
-            <label for="passkey2">Repeat new passkey</label>
-            <input type="password" id="passkey2" name="passkey2">
-            <button id="vis_pass" onclick="toggle_pass()"><img src="../assets/visibility.png"></button>
-        </div>
-        <button onclick="set_passkey()">Set new passkey</button>
-        <p id="new_passkey_result"></p>
-    </div>
+	<div class="topnav">
+		<a href="/static/home.html">Home</a>
+		<a href="/static/services.html">Services</a>
+		<a href="/static/wifi.html">Wi-Fi Settings</a>
+		<a href="/static/wwan.html">WWAN Settings</a>
+		<a href="/static/faults.html">Faults</a>
+		<div class="logout">
+			<form action="/logout" method="post">
+				<input type="submit" name="logout" value="Logout" />
+			</form>
+		</div>
+	</div>
+	<h1>Home</h1>
+	<div class="row">
+		<p>Serial number:</p>
+		<p id="serial_number">...</p>
+	</div>
+	<div class="row">
+		<p>Controller hardware:</p>
+		<p id="controller_hardware">...</p>
+	</div>
+	<div class="row">
+		<p>Controller software:</p>
+		<p id="controller_software">...</p>
+	</div>
+	<div class="row">
+		<p>Simulink Model version:</p>
+		<p id="simulink_version">...</p>
+	</div>
+	<form action="/api/GOcontroll_Linux.a2l" method="get">
+		<input type="submit" name="download" value="Download a2l" />
+	</form>
+	<div>
+		<div class="row">
+			<label for="passkey1">New passkey</label>
+			<input type="password" id="passkey1" name="passkey1">
+			<button id="vis_pass" onclick="toggle_pass()"><img src="../assets/visibility.png"></button>
+		</div>
+		<div class="row">
+			<label for="passkey2">Repeat new passkey</label>
+			<input type="password" id="passkey2" name="passkey2">
+			<button id="vis_pass" onclick="toggle_pass()"><img src="../assets/visibility.png"></button>
+		</div>
+		<button onclick="set_passkey()">Set new passkey</button>
+		<p id="new_passkey_result"></p>
+	</div>
 </body>
 
 </html>

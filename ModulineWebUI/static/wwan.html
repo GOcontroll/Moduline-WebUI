@@ -1,22 +1,25 @@
 <!doctype html>
 <html>
-  <head>
-    <title>GOcontroll WWAN</title>
-    <meta charset="UTF-8">
+
+<head>
+	<title>GOcontroll WWAN</title>
+	<meta charset="UTF-8">
 	<script src="/js/wwan.js"></script>
 	<script src="/js/common.js"></script>
 	<link rel="stylesheet" href="/style/wwan.css">
 	<link rel="stylesheet" href="/style/main.css">
-  </head>
-  <body>
+</head>
+
+<body>
 	<div class="topnav">
 		<a href="/static/home.html">Home</a>
 		<a href="/static/services.html">Services</a>
 		<a href="/static/wifi.html">Wi-Fi Settings</a>
+		<a href="/static/wwan.html">WWAN Settings</a>
 		<a href="/static/faults.html">Faults</a>
 		<div class="logout">
 			<form action="/logout" method="post">
-				<input type="submit" name="logout" value="Logout"/>
+				<input type="submit" name="logout" value="Logout" />
 			</form>
 		</div>
 	</div>
@@ -24,7 +27,7 @@
 		<h1>WWAN Settings</h1>
 		<div class="row">
 			<div class="center-vert">
-			    <p>WWAN State:</p>
+				<p>WWAN State:</p>
 			</div>
 			<div class="center-vert">
 				<label class="switch">
@@ -33,24 +36,25 @@
 				</label>
 			</div>
 		</div>
-        <div id="wwan_info" style="display: none;">
-            <div class="row">
-                <p>Imei:</p>
-                <p id="imei"></p>
-            </div>
-            <div class="row">
-                <p>Operator:</p>
-                <p id="operator"></p>
-            </div>
-            <div class="row">
-                <p>Modem Model:</p>
-                <p id="model"></p>
-            </div>
-            <div class="row">
-                <p>Signal:</p>
-                <p id="signal"></p>
-            </div>
-        </div>
+		<div id="wwan_info" style="display: none;">
+			<div class="row">
+				<p>Imei:</p>
+				<p id="imei"></p>
+			</div>
+			<div class="row">
+				<p>Operator:</p>
+				<p id="operator"></p>
+			</div>
+			<div class="row">
+				<p>Modem Model:</p>
+				<p id="model"></p>
+			</div>
+			<div class="row">
+				<p>Signal:</p>
+				<p id="signal"></p>
+			</div>
+		</div>
 	</div>
-  </body>
+</body>
+
 </html>
