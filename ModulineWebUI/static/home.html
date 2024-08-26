@@ -7,7 +7,7 @@
   <script src="/js/home.js"></script>
   <script src="/js/common.js"></script>
   <link rel="stylesheet" href="/style/main.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -15,6 +15,9 @@
     <div id="header-main-nav-decorator">
       <nav id="header-main-nav" class="topnav">
         <menu id="header-main-menu">
+          <li class="active_menu_page_button">
+            <a href="/static/home.html">Home</a>
+          </li>
           <li>
             <a href="/static/services.html">Services</a>
           </li>
@@ -27,7 +30,7 @@
           <li>
             <a href="/static/faults.html">Faults</a>
           </li>
-          <li class="logout" >
+          <li class="logout">
             <form action="/logout" method="post">
               <input type="submit" name="logout" value="Logout" />
             </form>
@@ -75,4 +78,5 @@
     </section>
   </main>
 </body>
+
 </html>
