@@ -1,63 +1,65 @@
 @import url('color.css');
 
 #login-form {
-  max-width: max-content;
-  margin: auto;
+	max-width: max-content;
+	margin: auto;
 }
 
 #login-form>article {
-  max-width: max-content;
-  margin: auto;
-  margin-top: 20px;
-  padding: 30px 25px;
-  background: var(--button-background-white);
-  box-shadow: 0.06rem 0.13rem 0.5rem 0.13rem var(--border-black-dark);
+	max-width: max-content;
+	margin: auto;
+	margin-top: 20px;
+	padding: 30px 25px;
+	background: var(--button-background-white);
+	box-shadow: 0.06rem 0.13rem 0.5rem 0.13rem var(--border-black-dark);
 }
 
 #login-form label {
-  font-weight: 600;
-  padding-right: 10px;
+	font-weight: 600;
+	padding-right: 10px;
 }
 
 #logo {
-  max-width: 600px;
-  width: 100%;
-  margin: auto;
+	max-width: 600px;
+	width: 100%;
+	margin: auto;
 }
 
 img {
-  width: 100%;
+	width: 100%;
 }
 
 form.input-field {}
 
 #login-button {
-  height: 45px;
-  width: 100px;
-  margin: auto;
-  margin-top: 20px;
+	height: 45px;
+	width: 100px;
+	margin: auto;
+	margin-top: 20px;
 }
 
-#login-button>input {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  background-color: var(--button-background);
-  color: var(--button-text-color);
-  font-weight: 600;
-  cursor: pointer;
-  border: var(--border-black-dark) solid 1px;
-  transition-duration: 0.5s;
+#login-button>button {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	background-color: var(--button-background);
+	color: var(--button-text-color);
+	font-weight: 600;
+	cursor: pointer;
+	border: var(--border-black-dark) solid 1px;
+	transition-duration: 0.5s;
 }
 
 #login-button:hover {
-  background-color: var(--accent-color-corp);
+	background-color: var(--accent-color-corp);
 }
 
 @media screen and (max-width: 600px) {
-  html {
-    font-size: 14px; /* Adjust font size for mobile */
-    height: auto; /* Adjust height to prevent overflow */
-    /* Add any other mobile-specific styles here */
-  }
+	html {
+		font-size: 14px;
+		/* Adjust font size for mobile */
+		height: auto;
+		/* Adjust height to prevent overflow */
+		/* Add any other mobile-specific styles here */
+	}
 }
