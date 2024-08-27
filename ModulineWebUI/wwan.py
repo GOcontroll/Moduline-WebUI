@@ -5,7 +5,7 @@ from microdot import Request
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
-from ModulineWebUI.controller import get_service, set_service
+from ModulineWebUI.handlers.service import get_service, set_service
 
 
 @app.get("/api/get_wwan")
@@ -20,7 +20,11 @@ async def get_wwan(req: Request, session: Session):
 @auth
 async def set_wwan(req: Request, session: Session):
     new_state = req.json["new_state"]
-    return json.dumps({"new_state": set_service("go-wwan", new_state)})
+    is_changed, error = set_service("go-wwan", new_state)
+    if is_changed:
+        return json.dumps({"new_state": new_state})
+    else:
+        return json.dumps({"err": f"Failed to change go-wwan state {error}"})
 
 
 def get_sim_num() -> dict:

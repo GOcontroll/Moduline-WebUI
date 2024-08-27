@@ -7,7 +7,7 @@ from microdot import Request
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
-from ModulineWebUI.controller import get_service, set_service
+from ModulineWebUI.handlers.service import get_service, set_service
 
 
 @app.get("/api/get_wifi")

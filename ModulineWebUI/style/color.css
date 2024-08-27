@@ -1,0 +1,71 @@
+:root {
+  --background-dark: #5C5C5C;
+  --background-accent-dark: #474747;
+  --accent-color-corp: #E94F24;
+  --prime-color-corp: #3B3B3B;
+  --border-black-dark: #1F1F1F;
+  --text-color-dark: #F1FFFA;
+  --button-background: #EE7958;
+  --button-text-color: black;
+  --button-background-focus: var(--accent-color-corp);
+  --button-text-color-focus: black;
+  --button-background-hover: var(--accent-color-corp);
+  --button-text-color-hover: black;
+  --error-background: #b10000;
+
+
+  --text-color-white: #3b3b3b;
+  --button-text-color-white: 3b3b3b;
+  --button-background-white: #E9ECEF;
+  --background-white: #F8F9FA;
+}
+
+@font-face {
+  font-family: NotoSans;
+  src: url(/assets/NotoSans-VariableFont_wdth,wght.ttf);
+  font-style: normal;
+}
+
+@font-face {
+  font-family: NotoSans;
+  src: url(/ModulineWebUI/assets/NotoSans-Italic-VariableFont_wdth\,wght.ttf);
+  font-style: italic;
+}
+
+* {
+  font-family: NotoSans;
+  color: black;
+}
+
+html {
+  /* overflow: hidden; */
+  font-size: 16px;
+  height: 100vh;
+  height: -webkit-fill-available;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  height: -webkit-fill-available;
+  /* margin: 0; */
+  background-color: var(--background-dark);
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.input-field input:focus {
+  box-shadow: 0 0 0.13rem 0.06rem var(--accent-color-corp);
+  border: #fff0 solid 0.06rem;
+  outline-style: none;
+}
+
+.input-field input:not(:placeholder-shown) {
+  border: var(--border-black-dark) solid 0.06rem;
+}
+
+.input-field input {
+  padding: 2px 5px;
+  border: #fff0 solid 0.06rem;
+}

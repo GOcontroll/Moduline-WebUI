@@ -6,24 +6,7 @@ from microdot import Request, send_file
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
-
-# keep this list up to date with index 0 of the list in services.js
-# this list limits the services that can be accessed through this api
-services = [
-    "ssh",
-    "go-simulink",
-    "nodered",
-    "go-bluetooth",
-    "go-upload-server",
-    "go-auto-shutdown",
-    "gadget-getty@ttyGS0",
-    "getty@ttymxc2",
-]
-
-
-# services
-def get_service(service: str) -> bool:
-    return not bool(subprocess.run(["systemctl", "is-active", service]).returncode)
+from ModulineWebUI.handlers.service import get_service, set_service, services
 
 
 @app.post("/api/get_service")
@@ -37,19 +20,6 @@ async def get_service_route(req: Request, session: Session):
         return json.dumps({"err": "Invalid service"})
 
 
-def set_service(service: str, new_state: bool) -> bool:
-    try:
-        if new_state:
-            subprocess.run(["systemctl", "enable", service]).check_returncode()
-            subprocess.run(["systemctl", "start", service]).check_returncode()
-        else:
-            subprocess.run(["systemctl", "disable", service]).check_returncode()
-            subprocess.run(["systemctl", "stop", service]).check_returncode()
-        return new_state
-    except:
-        return not new_state
-
-
 @app.post("/api/set_service")
 @with_session
 @auth
@@ -58,7 +28,11 @@ async def set_service_route(req: Request, session: Session):
     new_state: bool = data["new_state"]
     service: str = data["service"]
     if service in services:
-        return json.dumps({"new_state": set_service(service, new_state)})
+        is_changed, error = set_service(service, new_state)
+        if is_changed:
+            return json.dumps({"new_state": new_state})
+        else:
+            return json.dumps({"err": f"Failed to change service '{service}' state {error}"})
     else:
         return json.dumps({"err": "Invalid service"})
 
@@ -81,15 +55,6 @@ async def get_sim_ver(req: Request, session: Session):
 @auth
 async def a2l_down(req: Request, session: Session):
     return send_file("/usr/simulink/GOcontroll_Linux.a2l")
-
-
-# bt
-def get_bt_name() -> str:
-    pass
-
-
-def set_bt_name(name: str):
-    pass
 
 
 # controller info
@@ -140,7 +105,7 @@ async def get_serial_number(req: Request, session: Session):
 async def get_errors(req: Request, session: Session):
     # try to import a custom get_errors script
     try:
-        import errors
+        import modulinedtc.errors as errors
 
         return json.dumps(errors.get_errors())
     # default route
@@ -162,24 +127,9 @@ async def delete_errors(req: Request, session: Session):
     errors: "list[str]" = req.json
     try:
         for file in errors:
+            if ".." in file:
+                continue
             os.remove(f"/usr/mem-diag/{file}")
     except Exception as ex:
         return json.dumps({"err": f"Could not delete all requested errors\n{ex}"})
     return json.dumps({})
-
-
-# modules
-def get_modules() -> dict:
-    pass
-
-
-def scan_modules() -> dict:
-    pass
-
-
-def update_modules() -> dict:
-    pass
-
-
-def overwrite_module(module: int, firmware: str) -> dict:
-    pass
