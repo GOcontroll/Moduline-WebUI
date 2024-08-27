@@ -17,7 +17,7 @@ async function try_login(event) {
       result.innerText = "Error: " + resp.err;
       return;
     }
-    window.location.href = "/"
+    window.location.href = "/static/home.html";
   } catch (err) {
     alert_class_switch(result, "fail");
     result.innerText = "could not login, invalid response";
