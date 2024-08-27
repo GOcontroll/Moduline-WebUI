@@ -170,8 +170,6 @@ A passkey must be given at all times""")
 
     # register the passkey in the app module
     set_passkey(current_passkey)
-    # add path for the error module
-    sys.path.append("/usr/moduline/python")
 
     # run the correct version of the server
     if sslg:

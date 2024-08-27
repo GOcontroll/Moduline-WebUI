@@ -140,7 +140,7 @@ async def get_serial_number(req: Request, session: Session):
 async def get_errors(req: Request, session: Session):
     # try to import a custom get_errors script
     try:
-        import errors
+        import modulinedtc.errors as errors
 
         return json.dumps(errors.get_errors())
     # default route
