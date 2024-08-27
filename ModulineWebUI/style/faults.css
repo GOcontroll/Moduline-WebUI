@@ -1,0 +1,21 @@
+td.fault-code-fc, td.fault-code-desc {
+  background-color: white;
+  border: #c6c6c6 solid 3px;
+  word-break: break-word;
+}
+
+#fault-table > thead > tr > td:nth-child(2){
+  text-align:center
+}
+
+table#fault-table {
+  width: auto;
+}
+
+td.fault-code-fc {
+  min-width: 75px;
+}
+
+td.fault-code-desc {
+  width: 100%;
+}
