@@ -20,7 +20,7 @@
 	<header>
 		<div id="header-main-nav-decorator">
 			<nav id="header-main-nav" class="topnav">
-				<menu id="header-main-menu">
+				<menu class="header-main-menu">
 					<li>
 						<a href="/static/home.html">Home</a>
 					</li>
@@ -66,14 +66,14 @@
 					<input id="ap_ssid" type="text" />
 				</div>
 				<button class="orange-button" onclick="set_ap_ssid()">Change name</button>
-				<p id="set_ap_ssid_result"></p>
+				<p id="set_ap_ssid_result" class="alert-box"></p>
 				<div class="row">
 					<p>New Access Point password:</p>
 					<input id="ap_pass" type="password" />
 					<button id="vis_pass" onclick="toggle_ap_pass()"><img src="../assets/visibility.png"></button>
 				</div>
 				<button class="orange-button" onclick="set_ap_pass()">Change password</button>
-				<p id="set_ap_pass_result"></p>
+				<p id="set_ap_pass_result" class="alert-box"></p>
 			</div>
 		</section>
 	</main>

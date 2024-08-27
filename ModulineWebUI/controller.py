@@ -37,17 +37,19 @@ async def get_service_route(req: Request, session: Session):
         return json.dumps({"err": "Invalid service"})
 
 
-def set_service(service: str, new_state: bool) -> bool:
+import subprocess
+
+def set_service(service: str, new_state: bool) -> str:
     try:
         if new_state:
-            subprocess.run(["systemctl", "enable", service]).check_returncode()
-            subprocess.run(["systemctl", "start", service]).check_returncode()
+            subprocess.run(["systemctl", "enable", service], capture_output=True, text=True).check_returncode()
+            subprocess.run(["systemctl", "start", service], capture_output=True, text=True).check_returncode()
         else:
-            subprocess.run(["systemctl", "disable", service]).check_returncode()
-            subprocess.run(["systemctl", "stop", service]).check_returncode()
-        return new_state
-    except:
-        return not new_state
+            subprocess.run(["systemctl", "disable", service], capture_output=True, text=True).check_returncode()
+            subprocess.run(["systemctl", "stop", service], capture_output=True, text=True).check_returncode()
+        return "Service state changed successfully."
+    except subprocess.CalledProcessError as e:
+        return f"Error changing service state: {e.stderr}"
 
 
 @app.post("/api/set_service")
@@ -58,7 +60,10 @@ async def set_service_route(req: Request, session: Session):
     new_state: bool = data["new_state"]
     service: str = data["service"]
     if service in services:
-        return json.dumps({"new_state": set_service(service, new_state)})
+        result = set_service(service, new_state)
+        if result == "Service state changed successfully.":
+            return json.dumps({"new_state": new_state})
+        return json.dumps({"err": result})
     else:
         return json.dumps({"err": "Invalid service"})
 
