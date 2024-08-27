@@ -23,6 +23,7 @@ setup(
         "ModulineWebUI/static",
         "ModulineWebUI/js",
         "ModulineWebUI/style",
+        "ModulineWebUI/handlers",
     ],
     package_data={"": ["*.js", "*.html", "*.css", "*.jpg", "*.ico", "*.png", "*.ttf"]},
     entry_points={
