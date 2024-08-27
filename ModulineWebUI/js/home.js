@@ -36,34 +36,42 @@ document.addEventListener('DOMContentLoaded', async function () {
 }, false);
 
 
+function alert_class_switch(elem, newClass) {
+  elem.classList.remove("ok", "info", "fail");
+  elem.classList.add(newClass, "fade-in");
+  setTimeout(() => {
+    elem.classList.remove("fade-in");
+  }, 500);
+}
+
 async function set_passkey() {
   const pass1 = document.getElementById("passkey1");
   const pass2 = document.getElementById("passkey2");
   const result = document.getElementById("new_passkey_result");
   if (pass1.value != pass2.value) {
     result.innerText = "Could not set new passkey, entries don't match.";
-    result.className = "fail";
+    alert_class_switch(result, "info");
     return;
   }
   if (!(pass1.value.length > 6)) {
     result.innerText = "Could not set new passkey, new passkey must be longer than 6 characters.";
-    result.className = "fail";
+    alert_class_switch(result, "info");
     return;
   }
   try {
     const response = await post_json("/api/set_passkey", { "passkey": pass1.value });
     if (response.err) {
       result.innerText = response.err;
-      result.className = "fail";
+      alert_class_switch(result, "fail");
       console.log(response.deets);
       return;
     }
     result.innerText = "Successfully changed the passkey!"
-    result.className = "ok"
+    alert_class_switch(result, "ok");
     return
   } catch (err) {
     result.innerText = "Could not set new passkey, unexpected response from server";
-    result.className = "fail";
+    alert_class_switch(result, "fail");
     console.log(err);
     return;
   }
