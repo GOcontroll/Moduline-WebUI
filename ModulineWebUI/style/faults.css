@@ -1,6 +1,10 @@
-td.fault-code-fc, td.fault-code-desc {
+#fault-table > thead{
   background-color: white;
-  border: #c6c6c6 solid 3px;
+}
+
+#fault-codes > tr{
+  background-color: white;
+  /* border: #c6c6c6 solid 3px; */
   word-break: break-word;
 }
 
@@ -8,12 +12,17 @@ td.fault-code-fc, td.fault-code-desc {
   text-align:center
 }
 
+#fault-codes > tr:nth-child(2n) > td{
+  background-color: #dbecff;
+}
+
 table#fault-table {
+  /* border: aliceblue solid; */
   width: auto;
 }
 
 td.fault-code-fc {
-  min-width: 75px;
+  min-width: 80px;
 }
 
 td.fault-code-desc {
