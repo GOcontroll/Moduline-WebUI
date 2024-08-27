@@ -22,18 +22,38 @@ def get_service(service: str) -> bool:
     return not bool(subprocess.run(["systemctl", "is-active", service]).returncode)
 
 
-def set_service(service: str, enable: bool) -> tuple[bool, str]:
+def set_service(service: str, enable: bool) -> "tuple[bool, str]":
     """
     Returns a tuple where bool is false if the service failed to change
     and str contains errors.
     """
     try:
         if enable:
-            subprocess.run(["systemctl", "enable", service], capture_output=True, text=True, check=True)
-            subprocess.run(["systemctl", "start", service], capture_output=True, text=True, check=True)
+            subprocess.run(
+                ["systemctl", "enable", service],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            subprocess.run(
+                ["systemctl", "start", service],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
         else:
-            subprocess.run(["systemctl", "disable", service], capture_output=True, text=True, check=True)
-            subprocess.run(["systemctl", "stop", service], capture_output=True, text=True, check=True)
+            subprocess.run(
+                ["systemctl", "disable", service],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            subprocess.run(
+                ["systemctl", "stop", service],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
     except subprocess.CalledProcessError as e:
         logger.error(
             "Failed to change service '%s' state '%s'. Reason: %s",

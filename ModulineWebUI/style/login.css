@@ -38,7 +38,7 @@ form.input-field {}
   margin-top: 20px;
 }
 
-#login-button>input {
+#login-button>button {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -56,8 +56,10 @@ form.input-field {}
 
 @media screen and (max-width: 600px) {
   html {
-    font-size: 14px; /* Adjust font size for mobile */
-    height: auto; /* Adjust height to prevent overflow */
+    font-size: 14px;
+    /* Adjust font size for mobile */
+    height: auto;
+    /* Adjust height to prevent overflow */
     /* Add any other mobile-specific styles here */
   }
 }

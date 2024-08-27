@@ -64,30 +64,32 @@ Response.default_content_type = "text/html"
 
 
 @app.get("/")
-@app.post("/")
 @with_session
 async def index(req: Request, session: Session):
     token = session.get("token")
-    if req.method == "POST":
-        passkey: str = req.form.get("passkey")
-        pass_hash = hashlib.sha256(passkey.encode())
-        passkey = pass_hash.hexdigest()
-        # print(f"entered hash: {passkey}, should be: {current_passkey}")
-        if passkey == current_passkey:
-            token = "".join(
-                random.SystemRandom().choice(string.ascii_uppercase + string.digits)
-                for _ in range(10)
-            )  # generate new token for every new authorized session
-            session["token"] = token
-            register_token(token)
-            session.save()
-            return redirect("/static/home.html")
-        else:
-            return send_file("ModulineWebUI/login.html")
     if token is None or not authenticate_token(token):
         return send_file("ModulineWebUI/login.html")
     elif authenticate_token(token):
         return redirect("/static/home.html")
+
+
+@app.post("/login")
+@with_session
+async def login(req: Request, session: Session):
+    passkey = req.json
+    pass_hash = hashlib.sha256(passkey.encode())
+    passkey = pass_hash.hexdigest()
+    if passkey == current_passkey:
+        token = "".join(
+            random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+            for _ in range(10)
+        )  # generate new token for every new authorized session
+        session["token"] = token
+        register_token(token)
+        session.save()
+        return json.dumps("success")
+    else:
+        return json.dumps({"err": "Incorrect passkey"})
 
 
 @app.post("/logout")
