@@ -2,32 +2,54 @@
 <html>
 
 <head>
-	<title>GOcontroll Services</title>
-	<meta charset="UTF-8">
-	<script src="/js/common.js"></script>
-	<script src="/js/services.js"></script>
-	<link rel="stylesheet" href="/style/main.css">
-	<link rel="stylesheet" href="/style/service.css">
+  <title>GOcontroll Services</title>
+  <meta charset="UTF-8">
+  <script src="/js/common.js"></script>
+  <script src="/js/services.js"></script>
+  <link rel="stylesheet" href="/style/main.css">
+  <link rel="stylesheet" href="/style/service.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
 
 <body>
-	<div class="topnav">
-		<a href="/static/home.html">Home</a>
-		<a href="/static/services.html">Services</a>
-		<a href="/static/wifi.html">Wi-Fi Settings</a>
-		<a href="/static/wwan.html">WWAN Settings</a>
-		<a href="/static/faults.html">Faults</a>
-		<div class="logout">
-			<form action="/logout" method="post">
-				<input type="submit" name="logout" value="Logout" />
-			</form>
-		</div>
-	</div>
-	<div class="body">
-		<h1>Services</h1>
-		<div id="services">
-		</div>
-	</div>
+  <header>
+    <div id="header-main-nav-decorator">
+      <nav id="header-main-nav" class="topnav">
+        <menu class="header-main-menu">
+          <li>
+            <a href="/static/home.html">Home</a>
+          </li>
+          <li class="active_menu_page_button">
+            <a href="/static/services.html">Services</a>
+          </li>
+          <li>
+            <a href="/static/wifi.html">Wi-Fi Settings</a>
+          </li>
+          <li>
+            <a href="/static/wwan.html">WWAN Settings</a>
+          </li>
+          <li>
+            <a href="/static/faults.html">Faults</a>
+          </li>
+          <li class="logout">
+            <form action="/logout" method="post">
+              <input type="submit" name="logout" value="Logout" />
+            </form>
+          </li>
+        </menu>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="content-section">
+      <div class="body">
+        <h1>Services</h1>
+        <div id="services">
+        </div>
+      </div>
+    </section>
+  </main>
 </body>
 
 </html>

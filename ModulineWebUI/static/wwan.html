@@ -4,57 +4,82 @@
 <head>
 	<title>GOcontroll WWAN</title>
 	<meta charset="UTF-8">
+
+<head>
+	<title>GOcontroll WWAN</title>
+	<meta charset="UTF-8">
 	<script src="/js/wwan.js"></script>
 	<script src="/js/common.js"></script>
 	<link rel="stylesheet" href="/style/wwan.css">
 	<link rel="stylesheet" href="/style/main.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-	<div class="topnav">
-		<a href="/static/home.html">Home</a>
-		<a href="/static/services.html">Services</a>
-		<a href="/static/wifi.html">Wi-Fi Settings</a>
-		<a href="/static/wwan.html">WWAN Settings</a>
-		<a href="/static/faults.html">Faults</a>
-		<div class="logout">
-			<form action="/logout" method="post">
-				<input type="submit" name="logout" value="Logout" />
-			</form>
+	<header>
+		<div id="header-main-nav-decorator">
+			<nav id="header-main-nav" class="topnav">
+				<menu class="header-main-menu">
+					<li>
+						<a href="/static/home.html">Home</a>
+					</li>
+					<li>
+						<a href="/static/services.html">Services</a>
+					</li>
+					<li>
+						<a href="/static/wifi.html">Wi-Fi Settings</a>
+					</li>
+					<li class="active_menu_page_button">
+						<a href="/static/wwan.html">WWAN Settings</a>
+					</li>
+					<li>
+						<a href="/static/faults.html">Faults</a>
+					</li>
+					<li class="logout">
+						<form action="/logout" method="post">
+							<input type="submit" name="logout" value="Logout" />
+						</form>
+					</li>
+				</menu>
+			</nav>
 		</div>
-	</div>
-	<div class="body">
-		<h1>WWAN Settings</h1>
-		<div class="row">
-			<div class="center-vert">
-				<p>WWAN State:</p>
+	</header>
+	<main>
+		<section class="content-section">
+			<div class="body">
+				<h1>WWAN Settings</h1>
+				<div class="row">
+					<div class="center-vert">
+						<p>WWAN State:</p>
+					</div>
+					<div class="center-vert">
+						<label class="switch">
+							<input id="wwan" type="checkbox" onclick="set_wwan()">
+							<span class="slider round"></span>
+						</label>
+					</div>
+				</div>
+				<div id="wwan_info" style="display: none;">
+					<div class="row">
+						<p>Imei:</p>
+						<p id="imei"></p>
+					</div>
+					<div class="row">
+						<p>Operator:</p>
+						<p id="operator"></p>
+					</div>
+					<div class="row">
+						<p>Modem Model:</p>
+						<p id="model"></p>
+					</div>
+					<div class="row">
+						<p>Signal:</p>
+						<p id="signal"></p>
+					</div>
+				</div>
 			</div>
-			<div class="center-vert">
-				<label class="switch">
-					<input id="wwan" type="checkbox" onclick="set_wwan()">
-					<span class="slider round"></span>
-				</label>
-			</div>
-		</div>
-		<div id="wwan_info" style="display: none;">
-			<div class="row">
-				<p>Imei:</p>
-				<p id="imei"></p>
-			</div>
-			<div class="row">
-				<p>Operator:</p>
-				<p id="operator"></p>
-			</div>
-			<div class="row">
-				<p>Modem Model:</p>
-				<p id="model"></p>
-			</div>
-			<div class="row">
-				<p>Signal:</p>
-				<p id="signal"></p>
-			</div>
-		</div>
-	</div>
+		</section>
+	</main>
 </body>
 
 </html>
