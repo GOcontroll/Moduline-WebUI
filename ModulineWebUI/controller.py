@@ -162,6 +162,8 @@ async def delete_errors(req: Request, session: Session):
     errors: "list[str]" = req.json
     try:
         for file in errors:
+            if ".." in file:
+                continue
             os.remove(f"/usr/mem-diag/{file}")
     except Exception as ex:
         return json.dumps({"err": f"Could not delete all requested errors\n{ex}"})
