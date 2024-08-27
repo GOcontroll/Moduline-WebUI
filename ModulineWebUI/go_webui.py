@@ -2,16 +2,19 @@
 
 import hashlib
 import ipaddress
+import logging
 import os
 import ssl
 import subprocess
 import sys
+from logging.handlers import RotatingFileHandler
 
 import pkg_resources
 
 from ModulineWebUI.app import app, set_passkey
 from ModulineWebUI.conf import create_default_conf, get_conf
 
+logger = logging.getLogger(__name__)
 #########################################################################################################
 
 
@@ -49,7 +52,33 @@ go-webui -sslcert cert.pem -sslkey key.pem
 go-webui -a 0.0.0.0 -p 7500 -sslgen
 """
 
+def setup_logging():
+    # Create a logger
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)  # Set the logging level
+
+    # Format for log messages
+    formatter = logging.Formatter('%(asctime)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s')
+
+    # Create a rotating file handler
+    file_handler = RotatingFileHandler('/var/log/go_webui.log', maxBytes=5 * 1024 * 1024, backupCount=3)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+
+    # Create a console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(formatter)
+
+    # Add handlers to the logger
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+
 if __name__ == "__main__":
+    setup_logging()
+    logger.debug("Setup logging...")
+
     # register the routes from these modules
     from ModulineWebUI.controller import *
     from ModulineWebUI.ethernet import *
@@ -61,18 +90,18 @@ if __name__ == "__main__":
     try:
         conf = get_conf()
     except FileNotFoundError:
-        print(
+        logger.warning(
             "missing configuration file /etc/go_webui.conf, trying to create a default configuration"
         )
         try:
             create_default_conf()
             conf = get_conf()
         except PermissionError:
-            print("not allowed to create default config, trying with arguments")
+            logger.error("not allowed to create default config, trying with arguments")
         except Exception as ex:
-            print(ex)
+            logger.exception("Failed everything")
     except Exception as ex:
-        print(ex)
+        logger.exception("Failed everything")
 
     # global current_passkey
     ip = conf.get("ip", "127.0.0.1")
@@ -86,36 +115,40 @@ if __name__ == "__main__":
     try:
         ipaddress.IPv4Address(ip)
     except ValueError:
-        print(
-            f"Invalid IP configured in /etc/go_webui.conf: {ip}, continuing with default 127.0.0.1"
+        logger.warning(
+            "Invalid IP configured in /etc/go_webui.conf: %s, continuing with default 127.0.0.1",
+            ip,
         )
         ip = "127.0.0.1"
 
     try:
         port = int(port)
     except ValueError:
-        print(
-            f"Invalid port configured in /etc/go_webui.conf: {port}, continuing with default 5000"
+        logger.warning(
+            "Invalid port configured in /etc/go_webui.conf: %s, continuing with default 5000",
+            port,
         )
         port = 5000
 
     try:
         sslg = parse_boolean(sslg)
     except ValueError:
-        print(f"""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
-it should be set to [y]es/[n]o or true/false, not {sslg}.
-continuing with the default which is false""")
+        logger.warning("""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
+it should be set to [y]es/[n]o or true/false, not %s.
+continuing with the default which is false""", sslg)
         sslg = False
     if sslc != "":
         if not os.path.exists(sslc):
-            print(
-                f"Could not find ssl certificate at {os.path.abspath(sslc)}, continuing without ssl"
+            logger.warning(
+                "Could not find ssl certificate at %s, continuing without ssl",
+                os.path.abspath(sslc)
             )
             sslc = ""
     if sslk != "":
         if not os.path.exists(sslk):
-            print(
-                f"Could not find ssl key at {os.path.abspath(sslk)}, continuing without ssl"
+            logger.warning(
+                "Could not find ssl key at %s, continuing without ssl",
+                os.path.abspath(sslk)
             )
             sslk = ""
 
