@@ -1,19 +1,19 @@
-#fault-table > thead{
+#fault-table>thead {
   background-color: white;
 }
 
-#fault-codes > tr{
+#fault-codes>tr {
   background-color: white;
   /* border: #c6c6c6 solid 3px; */
   word-break: break-word;
 }
 
-#fault-table > thead > tr > td:nth-child(2){
-  text-align:center
+#fault-table>thead>tr>td:nth-child(2) {
+  text-align: center
 }
 
-#fault-codes > tr:nth-child(2n) > td{
-  background-color: #dbecff;
+#fault-codes>tr:nth-child(2n -1)>td {
+  background-color: #e94f242c;
 }
 
 table#fault-table {
