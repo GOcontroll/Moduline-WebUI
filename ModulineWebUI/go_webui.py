@@ -237,7 +237,7 @@ if __name__ == "__main__":
         set_passkey(hashlib.sha256(args.passkey.encode()).hexdigest())
     elif conf_passkey != "":
         # passkey in the conf should already be a hash
-        set_passkey(args.passkey)
+        set_passkey(conf_passkey)
     else:
         logger.critical(
             "No passkey has been found in the configuration or the arguments, the server must have a passkey to run"
