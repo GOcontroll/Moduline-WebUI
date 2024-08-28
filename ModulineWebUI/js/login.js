@@ -6,7 +6,8 @@ function alert_class_switch(elem, newClass) {
   }, 500);
 }
 
-async function try_login() {
+async function try_login(event) {
+  event.preventDefault(); // Prevent the default form submission
   const passkey_field = document.getElementById("passkey");
   const result = document.getElementById("set_login_result");
   try {
@@ -16,7 +17,7 @@ async function try_login() {
       result.innerText = "Error: " + resp.err;
       return;
     }
-    window.location.href = "static/home.html"
+    window.location.href = "/static/home.html";
   } catch (err) {
     alert_class_switch(result, "fail");
     result.innerText = "could not login, invalid response";

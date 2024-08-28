@@ -1,0 +1,30 @@
+#fault-table > thead{
+  background-color: white;
+}
+
+#fault-codes > tr{
+  background-color: white;
+  /* border: #c6c6c6 solid 3px; */
+  word-break: break-word;
+}
+
+#fault-table > thead > tr > td:nth-child(2){
+  text-align:center
+}
+
+#fault-codes > tr:nth-child(2n) > td{
+  background-color: #dbecff;
+}
+
+table#fault-table {
+  /* border: aliceblue solid; */
+  width: auto;
+}
+
+td.fault-code-fc {
+  min-width: 80px;
+}
+
+td.fault-code-desc {
+  width: 100%;
+}
