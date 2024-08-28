@@ -1,4 +1,4 @@
-#!/usr/bin/python3BooleanOptionalAction
+#!/usr/bin/env python3
 
 import hashlib
 import ipaddress
