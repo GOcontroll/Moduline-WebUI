@@ -52,27 +52,35 @@ go-webui -sslcert cert.pem -sslkey key.pem
 go-webui -a 0.0.0.0 -p 7500 -sslgen
 """
 
+
 def setup_logging():
     # Create a logger
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)  # Set the logging level
 
     # Format for log messages
-    formatter = logging.Formatter('%(asctime)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s')
-
-    # Create a rotating file handler
-    file_handler = RotatingFileHandler('/var/log/go_webui.log', maxBytes=5 * 1024 * 1024, backupCount=3)
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter)
+    formatter = logging.Formatter(
+        "%(asctime)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+    )
 
     # Create a console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(formatter)
-
-    # Add handlers to the logger
-    logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+
+    try:
+        # Create a rotating file handler
+        file_handler = RotatingFileHandler(
+            "/var/log/go_webui.log", maxBytes=5 * 1024 * 1024, backupCount=3
+        )
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    except PermissionError:
+        logger.warning(
+            "Unable to open /var/log/go_webui.log due to insufficient permissions, only logging to console"
+        )
 
 
 if __name__ == "__main__":
@@ -133,22 +141,25 @@ if __name__ == "__main__":
     try:
         sslg = parse_boolean(sslg)
     except ValueError:
-        logger.warning("""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
+        logger.warning(
+            """ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
 it should be set to [y]es/[n]o or true/false, not %s.
-continuing with the default which is false""", sslg)
+continuing with the default which is false""",
+            sslg,
+        )
         sslg = False
     if sslc != "":
         if not os.path.exists(sslc):
             logger.warning(
                 "Could not find ssl certificate at %s, continuing without ssl",
-                os.path.abspath(sslc)
+                os.path.abspath(sslc),
             )
             sslc = ""
     if sslk != "":
         if not os.path.exists(sslk):
             logger.warning(
                 "Could not find ssl key at %s, continuing without ssl",
-                os.path.abspath(sslk)
+                os.path.abspath(sslk),
             )
             sslk = ""
 
