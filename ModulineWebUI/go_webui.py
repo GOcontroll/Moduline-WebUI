@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3BooleanOptionalAction
 
 import hashlib
 import ipaddress
@@ -7,7 +7,9 @@ import os
 import ssl
 import subprocess
 import sys
+from argparse import ArgumentParser, BooleanOptionalAction
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
 import pkg_resources
 
@@ -27,55 +29,91 @@ def parse_boolean(boolean: str) -> bool:
         raise ValueError
 
 
-USAGE = f"""
-go-webui V{pkg_resources.require("ModulineWebUI")[0].version}
-using the options overrides the settings in /etc/go_webui.conf
-go-webui [options]
-
-options:
--a address          the address to listen on
--p port             the port to listen on
--sslgen             generate a new self signed ssl key/certificate to use
--sslkey path        give a path to an existing sslkey to use
--sslcert path       give a path to an existing sslcert to use
--passkey passkey    pass in a passkey to use to log in
--h                  display this text and exit
-
-default ip = 127.0.0.1
-default port = 5000
-default passkey (if /etc/go_webui.conf gets generated) = Moduline
-
-examples:
-go-webui
-go-webui -a 0.0.0.0 -p 7500 -passkey test
-go-webui -sslcert cert.pem -sslkey key.pem
-go-webui -a 0.0.0.0 -p 7500 -sslgen
-"""
-
 def setup_logging():
     # Create a logger
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)  # Set the logging level
 
     # Format for log messages
-    formatter = logging.Formatter('%(asctime)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s')
-
-    # Create a rotating file handler
-    file_handler = RotatingFileHandler('/var/log/go_webui.log', maxBytes=5 * 1024 * 1024, backupCount=3)
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter)
+    formatter = logging.Formatter(
+        "%(asctime)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+    )
 
     # Create a console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(formatter)
-
-    # Add handlers to the logger
-    logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+
+    try:
+        # Create a rotating file handler
+        file_handler = RotatingFileHandler(
+            "/var/log/go_webui.log", maxBytes=5 * 1024 * 1024, backupCount=3
+        )
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    except PermissionError:
+        logger.warning(
+            "Unable to open /var/log/go_webui.log due to insufficient permissions, only logging to console"
+        )
+
+
+def get_args():
+    parser = ArgumentParser(
+        prog="go-webui",
+        description=f"""go-webui V{pkg_resources.require("ModulineWebUI")[0].version}\n
+        This program provides a web based interface for GOcontroll Moduline controllers""",
+        epilog="Any argument passed will override the value set in /etc/go_webui.conf",
+        add_help=True,
+    )
+    parser.add_argument(
+        "-a",
+        "--address",
+        required=False,
+        type=str,
+        help="The address the server listens on",
+    )
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        required=False,
+        help="The port the server listens on",
+    )
+    parser.add_argument(
+        "-P",
+        "--passkey",
+        required=False,
+        type=str,
+        help="the passkey for the login page",
+    )
+    parser.add_argument(
+        "--sslgen",
+        action=BooleanOptionalAction,
+        required=False,
+        default=None,
+        help="Generate an SSL key/certificate upon startup or not to override the config",
+    )
+    parser.add_argument(
+        "-k",
+        "--sslkey",
+        required=False,
+        type=Path,
+        help="Supply a path to an ssl key file for the server to use",
+    )
+    parser.add_argument(
+        "-c",
+        "--sslcert",
+        required=False,
+        type=Path,
+        help="Supply a path to an ssl certificate file for the server to use",
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
+    args = get_args()
     setup_logging()
     logger.debug("Setup logging...")
 
@@ -103,106 +141,108 @@ if __name__ == "__main__":
     except Exception as ex:
         logger.exception("Failed everything")
 
-    # global current_passkey
+    # validate server address
     ip = conf.get("ip", "127.0.0.1")
+    if args.address is not None:
+        try:
+            ipaddress.IPv4Address(args.address)
+            ip = args.address
+        except ValueError:
+            logger.critical("Address passed as argument is not a valid IP address")
+            exit(-1)
+    else:
+        try:
+            ipaddress.IPv4Address(ip)
+        except ValueError:
+            logger.warning(
+                "Invalid IP configured in /etc/go_webui.conf: %s, continuing with default 127.0.0.1",
+                ip,
+            )
+            ip = "127.0.0.1"
+
     port = conf.get("port", 5000)
+    if args.port is not None:
+        print(args.port)
+        if 1 <= args.port and args.port <= 65535:
+            port = args.port
+        else:
+            logger.critical("Port passed as argument is not valid")
+            exit(-1)
+    else:
+        try:
+            port = int(port)
+            if not 1 <= port and port <= 65535:
+                raise ValueError
+        except ValueError:
+            logger.warning(
+                "Invalid port configured in /etc/go_webui.conf: %s, continuing with default 5000",
+                port,
+            )
+            port = 5000
+
     sslg = conf.get("ssl_gen", "false")
+    if args.sslgen is not None:
+        sslg = args.sslgen
+    else:
+        try:
+            sslg = parse_boolean(sslg)
+        except ValueError:
+            logger.warning(
+                """ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
+    it should be set to [y]es/[n]o or true/false, not %s.
+    continuing with the default which is false""",
+                sslg,
+            )
+            sslg = False
+
     sslc = conf.get("ssl_cert", "")
-    sslk = conf.get("ssl_key", "")
-    current_passkey = conf.get("pass_hash", "")
-
-    # validate values read from /etc/go_webui.conf
-    try:
-        ipaddress.IPv4Address(ip)
-    except ValueError:
-        logger.warning(
-            "Invalid IP configured in /etc/go_webui.conf: %s, continuing with default 127.0.0.1",
-            ip,
-        )
-        ip = "127.0.0.1"
-
-    try:
-        port = int(port)
-    except ValueError:
-        logger.warning(
-            "Invalid port configured in /etc/go_webui.conf: %s, continuing with default 5000",
-            port,
-        )
-        port = 5000
-
-    try:
-        sslg = parse_boolean(sslg)
-    except ValueError:
-        logger.warning("""ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
-it should be set to [y]es/[n]o or true/false, not %s.
-continuing with the default which is false""", sslg)
-        sslg = False
-    if sslc != "":
+    if args.sslcert is not None:
+        if os.path.exists(args.sslcert):
+            sslc = args.sslcert.absolute()
+        else:
+            logger.critical(
+                "SSL certificate passed as an argument doesn't exist at %s",
+                args.sslcert.absolute(),
+            )
+            exit(-1)
+    elif sslc != "":
         if not os.path.exists(sslc):
             logger.warning(
                 "Could not find ssl certificate at %s, continuing without ssl",
-                os.path.abspath(sslc)
+                os.path.abspath(sslc),
             )
             sslc = ""
-    if sslk != "":
+
+    sslk = conf.get("ssl_key", "")
+    if args.sslkey is not None:
+        if os.path.exists(args.sslcert):
+            sslc = args.sslcert.absolute()
+        else:
+            logger.critical(
+                "SSL key passed as an argument doesn't exist at %s",
+                args.sslcert.absolute(),
+            )
+            exit(-1)
+    elif sslk != "":
         if not os.path.exists(sslk):
             logger.warning(
                 "Could not find ssl key at %s, continuing without ssl",
-                os.path.abspath(sslk)
+                os.path.abspath(sslk),
             )
             sslk = ""
 
-    # current_passkey gets check after parsing arguments
-
-    # process cli arguments
-
-    # parse command line arguments
-    args = iter(sys.argv)
-    # skip the run argument
-    next(args)
-
-    for arg in args:
-        if arg == "-a":
-            ip = next(args)
-            try:
-                ipaddress.IPv4Address(ip)
-            except ValueError:
-                print("given ip address was not valid")
-                exit(-1)
-        elif arg == "-p":
-            try:
-                port = int(next(args))
-            except ValueError:
-                print("given port was not valid")
-                exit(-1)
-        elif arg == "-h":
-            print(USAGE)
-            exit(0)
-        elif arg == "-sslkey":
-            sslk = next(args)
-            if not os.path.exists(sslk):
-                print(f"Could not find ssl key at {os.path.abspath(sslk)}")
-                exit(-1)
-        elif arg == "-sslcert":
-            sslc = next(args)
-            if not os.path.exists(sslc):
-                print(f"Could not find ssl certificate at {os.path.abspath(sslc)}")
-                exit(-1)
-        elif arg == "-sslgen":
-            sslg = True
-        elif arg == "-passkey":
-            m = hashlib.sha256(next(args).encode())
-            current_passkey = m.hexdigest()
-            # print(f"set password hash to {current_passkey}")
-
-    # if no passkey found in /etc/go_webui.conf or passed in through args, exit
-    if current_passkey == "":
-        print("""No passkey found in /etc/go_webui.conf or in the arguments.
-A passkey must be given at all times""")
+    conf_passkey = conf.get("pass_hash", "")
+    if args.passkey is not None:
+        # passkey entered by argument still needs to be hashed
+        set_passkey(hashlib.sha256(args.passkey.encode()).hexdigest())
+    elif conf_passkey != "":
+        # passkey in the conf should already be a hash
+        set_passkey(args.passkey)
+    else:
+        logger.critical(
+            "No passkey has been found in the configuration or the arguments, the server must have a passkey to run"
+        )
         exit(-1)
-
-    # register the passkey in the app module
-    set_passkey(current_passkey)
 
     # run the correct version of the server
     if sslg:

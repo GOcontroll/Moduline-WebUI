@@ -31,4 +31,5 @@ setup(
             "go-webui = ModulineWebUI.__main__:execute_script",
         ]
     },
+    python_requires=">=3.9",
 )
