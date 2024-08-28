@@ -54,6 +54,67 @@ form.input-field {}
   background-color: var(--accent-color-corp);
 }
 
+
+.alert-box {
+  width: 0%;
+  transition-duration: 0.5s;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+  /* Adjust duration and timing function as needed */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fail {
+  width: auto;
+  text-align: center;
+  color: white;
+  box-shadow: 0.06rem 0.13rem 0.5rem 0.13rem var(--border-black-dark);
+  padding: 0.31rem;
+  background-color: #5c0000;
+}
+
+.info {
+  width: auto;
+  text-align: center;
+  color: #000;
+  box-shadow: 0.06rem 0.13rem 0.5rem 0.13rem #ddffff;
+  padding: 0.31rem;
+  background-color: #ddffff;
+  border: #a4d9ff solid 3px;
+}
+
+.ok {
+  width: auto;
+  color: #000;
+  box-shadow: 0.06rem 0.13rem 0.5rem 0.13rem #ddffdd;
+  padding: 0.31rem;
+  text-align: center;
+  background-color: #ddffdd;
+  border: #92c692 solid 3px;
+}
+
+/* Button  */
+.orange-button {
+  padding: 0.63rem 1.25rem;
+  background: var(--button-background);
+  color: var(--button-text-color);
+  border: none;
+  font-weight: 600;
+  margin: 0.63rem 0;
+  transition-duration: 0.5s;
+}
+
 @media screen and (max-width: 600px) {
   html {
     font-size: 14px;

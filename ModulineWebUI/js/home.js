@@ -67,6 +67,8 @@ async function set_passkey() {
       return;
     }
     result.innerText = "Successfully changed the passkey!"
+    pass1.value = "";
+    pass2.value = "";
     alert_class_switch(result, "ok");
     return
   } catch (err) {
