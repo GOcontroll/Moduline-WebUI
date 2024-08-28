@@ -5,10 +5,6 @@ Configure interfaces and services, check errorcodes or see general system inform
 
 ## Development
 
--- App will require access to create and write log to file "/var/log/go_webui.log", 
-so you could run app as root !! 
-... also app want to create and write to file "/etc/go_webui.conf" may root will be with you.
-
 for development set up a venv in the project, enter it and install the necessary packages:  
 `python3 -m venv .venv` #Create the venv  
 `source .venv/bin/activate` #Enter the venv  
