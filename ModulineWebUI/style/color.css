@@ -22,15 +22,10 @@
 
 @font-face {
   font-family: NotoSans;
-  src: url(/assets/NotoSans-VariableFont_wdth,wght.ttf);
+  src: url(/assets/NotoSans-Regular.ttf);
   font-style: normal;
 }
 
-@font-face {
-  font-family: NotoSans;
-  src: url(/ModulineWebUI/assets/NotoSans-Italic-VariableFont_wdth\,wght.ttf);
-  font-style: italic;
-}
 
 * {
   font-family: NotoSans;

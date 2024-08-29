@@ -4,6 +4,8 @@
 <head>
   <title>Log in</title>
   <meta charset="UTF-8">
+  <script src="js/common.js"></script>
+  <script src="js/login.js"></script>
   <link rel="stylesheet" href="/style/login.css">
   <!-- <link rel="stylesheet" href="/style/main.css"> -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,13 +21,14 @@
       </article>
       <section class="content-section" id="login-form">
         <article>
-          <form class="input-field" action="" method="post">
+          <form class="input-field" id="loginForm" action="" method="post" onsubmit="return try_login(event);">
             <label for='passkey'>Passkey</label>
             <input placeholder="Enter passkey" type='password' id='passkey' name='passkey' value='' autofocus>
-            <div id="login-button">
-              <input type='submit' value='Log in'>
-            </div>
           </form>
+          <div id="login-button">
+            <button type="submit" form="loginForm">Log in</button>
+          </div>
+          <p id="set_login_result" class="alert-box"></p>
         </article>
       </section>
     </section>
