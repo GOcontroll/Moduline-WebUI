@@ -14,7 +14,7 @@ then run
 to install the module in your venv while using the regular project files as the source
 
 then run  
-`go-webui -passkey test`  
+`go-webui --passkey test`  
 to launch the webserver with the passkey 'test'
 
 `python3 setup.py sdist`  
