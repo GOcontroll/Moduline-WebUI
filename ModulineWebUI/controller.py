@@ -6,7 +6,7 @@ from microdot import Request, send_file
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
-from ModulineWebUI.handlers.service import get_service, set_service, services
+from ModulineWebUI.handlers.service import get_service, services, set_service
 
 
 @app.post("/api/get_service")
@@ -32,7 +32,9 @@ async def set_service_route(req: Request, session: Session):
         if is_changed:
             return json.dumps({"new_state": new_state})
         else:
-            return json.dumps({"err": f"Failed to change service '{service}' state {error}"})
+            return json.dumps(
+                {"err": f"Failed to change service '{service}' state {error}"}
+            )
     else:
         return json.dumps({"err": "Invalid service"})
 
@@ -43,9 +45,14 @@ async def set_service_route(req: Request, session: Session):
 @auth
 async def get_sim_ver(req: Request, session: Session):
     try:
-        with open("/usr/simulink/CHANGELOG.md", "r") as changelog:
-            head = changelog.readline()
-        return json.dumps({"version": head.split(" ")[1].strip()})
+        with open("/usr/mem-sim/MODEL_MAJOR", "r") as major:
+            major_ver = major.readline()
+        with open("/usr/mem-sim/MODEL_FEATURE", "r") as feature:
+            feature_ver = feature.readline()
+        with open("/usr/mem-sim/MODEL_FIX", "r") as fix:
+            fix_ver = fix.readline()
+        version = f"V{major_ver}.{feature_ver}.{fix_ver}"
+        return json.dumps({"version": version})
     except Exception as ex:
         return json.dumps({"err": f"No changelog found\n{ex}"})
 
