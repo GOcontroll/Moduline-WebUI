@@ -6,7 +6,12 @@ from microdot import Request, send_file
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
-from ModulineWebUI.handlers.service import get_service, services, set_service
+from ModulineWebUI.handlers.service import (
+    get_service,
+    get_service_blacklist,
+    services,
+    set_service,
+)
 
 
 @app.post("/api/get_service")
@@ -14,7 +19,7 @@ from ModulineWebUI.handlers.service import get_service, services, set_service
 @auth
 async def get_service_route(req: Request, session: Session):
     service: str = req.json
-    if service in services:
+    if service not in get_service_blacklist() and service in services:
         return json.dumps({"state": get_service(service)})
     else:
         return json.dumps({"err": "Invalid service"})
@@ -27,7 +32,7 @@ async def set_service_route(req: Request, session: Session):
     data = req.json
     new_state: bool = data["new_state"]
     service: str = data["service"]
-    if service in services:
+    if service not in get_service_blacklist() and service in services:
         is_changed, error = set_service(service, new_state)
         if is_changed:
             return json.dumps({"new_state": new_state})

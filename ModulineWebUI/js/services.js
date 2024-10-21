@@ -60,13 +60,13 @@ async function get_service(service, index) {
     cb.setAttribute("onclick", "set_service(" + index + ")");
     const resp = await promise;
     if (resp.err) {
-      alert("Could not get the state of " + service[0] + ":\n" + resp.err);
+      console.log("Could not get the state of " + service[0] + ":\n" + resp.err);
       return;
     }
     cb.checked = resp.state;
     return new_service;
   } catch (err) {
-    alert("Could not get the state of " + service[0] + ":\n" + err);
+    console.log("Could not get the state of " + service[0] + ":\n" + err);
   }
 }
 
@@ -80,7 +80,10 @@ document.addEventListener(
       promises.push(get_service(services_list[i], i));
     }
     for (const promise of promises) {
-      services.appendChild(await promise);
+      const child = await promise
+      if (child) {
+        services.appendChild(child);
+      }
     }
   },
   false
