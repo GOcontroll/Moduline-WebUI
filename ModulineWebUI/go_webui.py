@@ -6,7 +6,6 @@ import logging
 import os
 import ssl
 import subprocess
-import sys
 from argparse import ArgumentParser, BooleanOptionalAction
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -15,6 +14,7 @@ import pkg_resources
 
 from ModulineWebUI.app import app, set_passkey
 from ModulineWebUI.conf import create_default_conf, get_conf
+from ModulineWebUI.handlers.service import set_service_blacklist
 
 logger = logging.getLogger(__name__)
 #########################################################################################################
@@ -87,6 +87,13 @@ def get_args():
         required=False,
         type=str,
         help="the passkey for the login page",
+    )
+    parser.add_argument(
+        "-b",
+        "--service-blacklist",
+        type=str,
+        required=False,
+        help="A comma seperated list of services that are not allowed to be managed via the web UI",
     )
     parser.add_argument(
         "--sslgen",
@@ -174,11 +181,21 @@ if __name__ == "__main__":
             if not 1 <= port and port <= 65535:
                 raise ValueError
         except ValueError:
-            logger.warning(
+            logger.error(
                 "Invalid port configured in /etc/go_webui.conf: %s, continuing with default 5000",
                 port,
             )
             port = 5000
+
+    service_blacklist = conf.get("service_blacklist", "").split(",")
+    if args.service_blacklist is not None:
+        try:
+            service_blacklist = args.service_blacklist.split(",")
+        except Exception as ex:
+            logger.error(
+                f"Failed to parse service-blacklist argument, using config instead\n{ex}"
+            )
+    set_service_blacklist(service_blacklist)
 
     sslg = conf.get("ssl_gen", "false")
     if args.sslgen is not None:
@@ -187,7 +204,7 @@ if __name__ == "__main__":
         try:
             sslg = parse_boolean(sslg)
         except ValueError:
-            logger.warning(
+            logger.error(
                 """ssl_gen parameter in /etc/go_webui.conf is not configured right, check for typos
     it should be set to [y]es/[n]o or true/false, not %s.
     continuing with the default which is false""",

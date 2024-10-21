@@ -17,6 +17,18 @@ services = [
     "getty@ttymxc2",
 ]
 
+service_blacklist = []
+
+
+def set_service_blacklist(blacklist: list[str]):
+    global service_blacklist
+    service_blacklist = blacklist
+
+
+def get_service_blacklist() -> list[str]:
+    global service_blacklist
+    return service_blacklist
+
 
 def get_service(service: str) -> bool:
     return not bool(subprocess.run(["systemctl", "is-active", service]).returncode)

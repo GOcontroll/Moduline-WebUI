@@ -16,18 +16,22 @@ def get_conf() -> dict:
 def create_default_conf():
     with open("/etc/go_webui.conf", "x") as conf_file:
         default_hash = hashlib.sha256("Moduline".encode()).hexdigest()
-        conf_file.write(f"""#the ip the server listens on
+        conf_file.write(f"""
+#the ip the server listens on
 ip=127.0.0.1
 #the port the server listens on
 port=5000
+#set pass_hash with a sha256 of your passkey, the default value is the hash of "Moduline"
+pass_hash={default_hash}
+#blacklist services which are not allowed to be switched with the web UI, comma seperated list
+service_blacklist=
 #generate a new ssl certificate/key when this program is executed
 ssl_gen=false
-#set ssl_key with a path to your ssl certificate, does nothing if ssl_gen is true
-ssl_cert=
 #set ssl_key with a path to your ssl key, does nothing if ssl_gen is true
 ssl_key=
-#set pass_hash with a sha256 of your passkey, the default value is the hash of "Moduline"
-pass_hash={default_hash}""")
+#set ssl_cert with a path to your ssl certificate, does nothing if ssl_gen is true
+ssl_cert=
+""")
 
 
 def modify_conf(key: str, val: str):

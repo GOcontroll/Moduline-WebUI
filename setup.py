@@ -7,7 +7,7 @@ long_description = (root / "README.md").read_text()
 
 setup(
     name="ModulineWebUI",
-    version="1.0.1",
+    version="1.1.0",
     description="A web UI to configure GOcontroll Moduline controllers",
     url="https://github.com/GOcontroll/Moduline-WebUI",
     license="MIT",
