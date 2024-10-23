@@ -3,6 +3,12 @@
 A web based UI for GOcontroll Moduline controllers.  
 Configure interfaces and services, check errorcodes or see general system information.
 
+## Installing
+
+Download the desired version from the github releases, then  
+`pip install /path/to/your-version.tar.gz`  
+If your application has a DTC decoding package don't forget to install this one too
+
 ## Development
 
 for development set up a venv in the project, enter it and install the necessary packages:  
