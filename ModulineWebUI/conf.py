@@ -30,7 +30,7 @@ ssl_gen=false
 #set ssl_key with a path to your ssl key, does nothing if ssl_gen is true
 ssl_key=
 #set ssl_cert with a path to your ssl certificate, does nothing if ssl_gen is true
-ssl_cert=
+ssl_cert=\n
 """)
 
 
