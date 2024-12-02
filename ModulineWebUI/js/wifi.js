@@ -30,11 +30,6 @@ async function set_wifi() {
   //try to make it a reality
   try {
     const resp = await post_json("/api/set_wifi", set_state);
-    if (resp.err != undefined) {
-      //server failed to toggle wifi
-      cb.checked = !cb.checked;
-      alert("Could not toggle wifi:\n" + resp.err);
-    }
   } catch (err) {
     alert("Could not toggle wifi:\n" + err);
     cb.checked = !cb.checked;
@@ -48,11 +43,6 @@ async function set_ap_ssid() {
   if (ssid.length > 0) {
     try {
       const response = await post_json("/api/set_ap_ssid", ssid);
-      if (response.err) {
-        alert_class_switch(result, "fail");
-        result.innerText = "Error: " + response.err;
-        return;
-      }
       result.setAttribute();
       result.innerText = "Success!";
       input.value = "";
@@ -75,11 +65,6 @@ async function set_ap_pass() {
     //if the password is shorter than 8 characters nmcli con mod will fail
     try {
       const response = await post_json("/api/set_ap_pass", pass);
-      if (response.err) {
-        result.innerText = "Error: " + response.err;
-        alert_class_switch(result, "fail");
-        return;
-      }
       alert_class_switch(result, "ok");
       result.innerText = "Success!";
       input.value = "";
@@ -109,6 +94,7 @@ document.addEventListener(
   async function () {
     const wifi_request = await (await fetch("/api/get_wifi")).json();
     document.getElementById("wifi").checked = wifi_request.state;
+    const wifi_ip_request = await (await fetch("/api/get_wifi_ip")).json();
   },
   false
 );
