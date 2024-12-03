@@ -25,7 +25,7 @@ async def set_wifi(req: Request, session: Session):
     if res:
         return json.dumps({"state": state})
     else:
-        return json.dumps({"err": f"could not switch state to {state}\n{err}"})
+        raise EnvironmentError(f"could not switch state to {state}\n{err}")
 
 
 @app.post("/api/activate_ap")
