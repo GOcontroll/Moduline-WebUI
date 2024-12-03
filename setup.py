@@ -16,7 +16,7 @@ setup(
     author="GOcontroll",
     author_email="info@gocontroll.com",
     maintainer="Maud Spierings",
-    install_requires=["microdot", "PyJWT", "netifaces"],
+    install_requires=["microdot", "PyJWT", "PyModuline"],
     packages=[
         "ModulineWebUI",
         "ModulineWebUI/assets",
