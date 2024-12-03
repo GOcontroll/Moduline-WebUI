@@ -1,18 +1,19 @@
 import json
-import subprocess
 
 from microdot import Request
 from microdot.session import Session, with_session
 
+from PyModuline import wwan
+
 from ModulineWebUI.app import app, auth
-from ModulineWebUI.handlers.service import get_service, set_service
 
 
 @app.get("/api/get_wwan")
 @with_session
 @auth
 async def get_wwan(req: Request, session: Session):
-    return json.dumps({"state": get_service("go-wwan")})
+    
+    return json.dumps({"state": wwan.get_wwan()})
 
 
 @app.post("/api/set_wwan")
@@ -20,52 +21,43 @@ async def get_wwan(req: Request, session: Session):
 @auth
 async def set_wwan(req: Request, session: Session):
     new_state = req.json["new_state"]
-    is_changed, error = set_service("go-wwan", new_state)
+    is_changed, error = wwan.set_wwan(new_state)
     if is_changed:
         return json.dumps({"new_state": new_state})
     else:
         return json.dumps({"err": f"Failed to change go-wwan state {error}"})
 
-
-def get_sim_num() -> dict:
-    pass
+@app.post("/api/set_sim_num")
+@with_session
+@auth
+async def get_sim_num(req: Request, session: Session):
+    return json.dumps(wwan.get_sim_num())
 
 
 @app.get("/api/get_wwan_stats")
 @with_session
 @auth
 async def get_wwan_stats(req: Request, session: Session):
-    try:
-        modem = subprocess.run(
-            ["mmcli", "-J", "--list-modems"], stdout=subprocess.PIPE, text=True
-        )
-        modem.check_returncode()
-        modem = json.loads(modem.stdout)
-        modem_number = modem["modem-list"][0]
-        output = subprocess.run(
-            ["mmcli", "-J", "--modem=" + modem_number],
-            stdout=subprocess.PIPE,
-            text=True,
-        )
-        output.check_returncode()
-        mmcli = json.loads(output.stdout)
-        stats = {}
-        stats["imei"] = mmcli["modem"]["3gpp"]["imei"]
-        stats["operator"] = mmcli["modem"]["3gpp"]["operator-name"]
-        stats["model"] = mmcli["modem"]["generic"]["model"]
-        stats["signal"] = mmcli["modem"]["generic"]["signal-quality"]["value"]
-        return json.dumps(stats)
-    except:
-        return json.dumps({"err": "Could not get wwan information"})
+    return json.dumps(wwan.get_wwan_stats())
 
+@app.post("/api/get_apn")
+@with_session
+@auth
+async def get_apn(req: Request, session: Session):
+    json.dumps(wwan.get_apn())
 
-def get_apn() -> dict:
-    pass
+@app.post("/api/set_apn")
+@with_session
+@auth
+async def set_apn(req: Request, session: Session):
+    new_apn: str = req.json["new_apn"]
+    wwan.set_apn(new_apn)
+    return json.dumps({})
 
-
-def set_apn(apn: dict):
-    pass
-
-
-def set_pin(pin: dict):
-    pass
+@app.post("/api/set_pin")
+@with_session
+@auth
+async def set_pin(req: Request, session: Session):
+    new_pin: str = req.json["new_pin"]
+    wwan.set_pin(new_pin)
+    return json.dumps({})
