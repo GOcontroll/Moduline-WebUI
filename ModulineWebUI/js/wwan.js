@@ -7,11 +7,6 @@ async function set_wwan() {
     //try to make it a reality
     try {
         const resp = await post_json("/api/set_wwan", set_state);
-        if (resp.err != undefined) {
-            //server failed to toggle wwan
-            cb.checked = !cb.checked;
-            console.log("Could not toggle wwan:\n" + resp.err);
-        }
     } catch (err) {
         console.log("Could not toggle wwan:\n" + err);
         cb.checked = !cb.checked;
@@ -23,17 +18,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         const wwan_request = await (await fetch('/api/get_wwan')).json();
         document.getElementById("wwan").checked = wwan_request.state;
         if (wwan_request.state) {
-            const wwan_stats_request = await (await fetch('/api/get_wwan_stats')).json();
-            if (wwan_stats_request.err) {
-                console.log(wwan_stats_request.err);
+            try {
+                const wwan_stats_request = await (await fetch('/api/get_wwan_stats')).json();
+                document.getElementById("imei").innerText = wwan_stats_request.imei;
+                document.getElementById("operator").innerText = wwan_stats_request.operator;
+                document.getElementById("model").innerText = wwan_stats_request.model;
+                document.getElementById("signal").innerText = wwan_stats_request.signal;
+                document.getElementById("wwan_info").style.display = "block";
+            } catch (err) {
+                console.log(err);
                 document.getElementsByClassName("body")[0].append("Could not get WWAN info, if it was just switch on this can take some time to be available");
                 return;
             }
-            document.getElementById("imei").innerText = wwan_stats_request.imei;
-            document.getElementById("operator").innerText = wwan_stats_request.operator;
-            document.getElementById("model").innerText = wwan_stats_request.model;
-            document.getElementById("signal").innerText = wwan_stats_request.signal;
-            document.getElementById("wwan_info").style.display = "block";
         }
     } catch (err) {
         console.log(err);

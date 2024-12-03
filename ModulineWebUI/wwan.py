@@ -12,7 +12,6 @@ from ModulineWebUI.app import app, auth
 @with_session
 @auth
 async def get_wwan(req: Request, session: Session):
-    
     return json.dumps({"state": wwan.get_wwan()})
 
 
@@ -25,7 +24,7 @@ async def set_wwan(req: Request, session: Session):
     if is_changed:
         return json.dumps({"new_state": new_state})
     else:
-        return json.dumps({"err": f"Failed to change go-wwan state {error}"})
+        raise EnvironmentError(f"could not switch state to {new_state}\n{error}")
 
 @app.post("/api/set_sim_num")
 @with_session
