@@ -4,3 +4,8 @@ dist/
 .vscode/
 .venv
 *.pem
+.pybuild/
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/python3-*

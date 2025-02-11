@@ -1,0 +1,12 @@
+[Unit]
+Description=GOcontroll web UI
+After=network.target
+
+[Service]
+Type=simple
+RemainAfterExit=no
+
+ExecStart=/usr/bin/go-webui
+
+[Install]
+WantedBy=multi-user.target
