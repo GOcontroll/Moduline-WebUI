@@ -1,3 +1,6 @@
+## V1.2.0
+- Feature: Added the Simulink Parameter configuration page
+
 ## V1.1.0
 - Feature: Added a blacklist for switching services to conf and args
 
