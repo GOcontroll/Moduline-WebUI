@@ -2,12 +2,12 @@
 <html>
 
 <head>
-  <title>GOcontroll Faults</title>
+  <title>GOcontroll Simulink configuration</title>
   <meta charset="UTF-8" />
   <script src="/js/common.js"></script>
-  <script src="/js/faults.js"></script>
+  <script src="/js/simulink-conf.js"></script>
   <link rel="stylesheet" href="/style/main.css" />
-  <link rel="stylesheet" href="/style/faults.css" />
+  <link rel="stylesheet" href="/style/simulink-conf.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
@@ -28,10 +28,10 @@
           <li>
             <a href="/static/wwan.html">WWAN Settings</a>
           </li>
-          <li class="active_menu_page_button">
+          <li>
             <a href="/static/faults.html">Faults</a>
           </li>
-          <li>
+          <li class="active_menu_page_button">
             <a href="/static/simulink-conf.html">Simulink Configuration</a>
           </li>
           <li class="logout">
@@ -46,25 +46,18 @@
   <main>
     <section class="content-section">
       <div class="body">
-        <h1>Fault codes</h1>
-        <table id="fault-table">
+        <h1>Simulink configuration Parameters</h1>
+        <table id="param-table">
           <thead>
             <tr>
-              <td>Fault code</td>
-              <td>Description</td>
-              <td></td>
+              <td>Parameter</td>
+              <td>Value</td>
             </tr>
           </thead>
-          <tbody id="fault-codes"></tbody>
+          <tbody id="parameters"></tbody>
         </table>
-        <button class="orange-button" onclick="select_all_codes()">
-          Select all
-        </button>
-        <button class="orange-button" onclick="delete_codes()">
-          Delete selected codes
-        </button>
-        <button class="orange-button" onclick="update_errors()">
-          Retrieve fault codes
+        <button class="orange-button" onclick="save_parameters()">
+          Save parameters
         </button>
       </div>
     </section>
@@ -73,12 +66,13 @@
 
 </html>
 
-<template id="fault-code">
-  <tr>
-    <td class="fault-code-fc"></td>
-    <td class="fault-code-desc"></td>
+<template id="parameter">
+  <tr class="parameter">
+    <td class="param-name"></td>
     <td>
-      <input class="fault-code-sel" type="checkbox" />
+      <form action="" onsubmit="return save_parameters(event)">
+        <input class="param-val" type="text" inputmode="decimal" />
+      </form>
     </td>
   </tr>
 </template>

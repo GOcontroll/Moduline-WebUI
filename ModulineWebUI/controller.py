@@ -139,9 +139,43 @@ async def delete_errors(req: Request, session: Session):
     errors: "list[str]" = req.json
     try:
         for file in errors:
-            if ".." in file:
+            if "/" in file:
                 continue
             os.remove(f"/usr/mem-diag/{file}")
     except Exception as ex:
         return json.dumps({"err": f"Could not delete all requested errors\n{ex}"})
+    return json.dumps({})
+
+
+# parameters
+@app.get("/api/get_parameters")
+@with_session
+@auth
+async def get_parameters(req: Request, session: Session):
+    parameters = []
+    files = os.listdir("/etc/go-simulink")
+    for file in files:
+        with open(f"/etc/go-simulink/{file}", "r") as par:
+            parameters.append({"name": file, "val": par.readline().strip()})
+    return json.dumps(parameters)
+
+
+@app.post("/api/save_parameters")
+@with_session
+@auth
+async def save_parameters(req: Request, session: Session):
+    parameters = req.json
+    faulty = {"err": []}
+    for param in parameters:
+        if "/" in param["name"]:
+            continue
+        try:
+            float(param["val"])
+        except ValueError:
+            faulty["err"].append(param["name"])
+            continue
+        with open(f"/etc/go-simulink/{param['name']}", "w") as par:
+            par.write(param["val"])
+    if len(faulty["err"]):
+        return json.dumps(faulty), 400
     return json.dumps({})
