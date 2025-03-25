@@ -153,7 +153,7 @@ async def delete_errors(req: Request, session: Session):
 @auth
 async def get_parameters(req: Request, session: Session):
     parameters = []
-    files = os.listdir("/etc/go-simulink")
+    files = sorted(os.listdir("/etc/go-simulink"))
     for file in files:
         with open(f"/etc/go-simulink/{file}", "r") as par:
             parameters.append({"name": file, "val": par.readline().strip()})
