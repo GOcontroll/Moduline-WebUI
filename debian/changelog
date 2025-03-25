@@ -1,5 +1,11 @@
-moduline-webui (1.1.0-1) UNRELEASED; urgency=medium
+moduline-webui (1.2.1) unstable; urgency=medium
+
+  * Sort list of Simulink parameters
+
+ -- Maud Spierings <maudspierings@gocontroll.com>  Tue, 25 Mar 2025 08:29:45 +0100
+
+moduline-webui (1.2.0) unstable; urgency=medium
 
   * Initial release.
 
- -- Maud Spierings <maudspierings@gocontroll.com>  Tue, 11 Feb 2025 10:17:32 +0100
+ -- Maud Spierings <maudspierings@gocontroll.com>  Wed, 19 Mar 2025 10:58:16 +0100

@@ -1,20 +1,20 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Source: https://gocontroll.com
+Source: <https://github.com/gocontroll/moduline-webui>
 Upstream-Name: moduline-webui
-Upstream-Contact: GOcontroll <info@gocontroll.com>
+Upstream-Contact: GOcontroll <support@gocontroll.com>
 
 Files:
  *
 Copyright:
- 2025 Maud Spierings <maudspierings@gocontroll.com>
  2025 GOcontroll <info@gocontroll.com>
+ 2025 Maud Spierings <maudspierings@gocontroll.com>
 License: Expat
 
 Files:
  debian/*
 Copyright:
- 2025 Maud Spierings <maudspierings@gocontroll.com>
  2025 GOcontroll <info@gocontroll.com>
+ 2025 Maud Spierings <maudspierings@gocontroll.com>
 License: Expat
 
 License: Expat
