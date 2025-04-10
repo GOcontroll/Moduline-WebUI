@@ -7,7 +7,7 @@ long_description = (root / "README.md").read_text()
 
 setup(
     name="ModulineWebUI",
-    version="1.2.1",
+    version="1.2.2",
     description="A web UI to configure GOcontroll Moduline controllers",
     url="https://github.com/GOcontroll/Moduline-WebUI",
     license="MIT",
@@ -16,7 +16,7 @@ setup(
     author="GOcontroll",
     author_email="info@gocontroll.com",
     maintainer="Maud Spierings",
-    install_requires=["microdot", "PyJWT", "netifaces"],
+    install_requires=["microdot", "PyJWT", "netifaces", "setuptools"],
     packages=[
         "ModulineWebUI",
         "ModulineWebUI/assets",

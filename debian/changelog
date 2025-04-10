@@ -1,3 +1,9 @@
+moduline-webui (1.2.2) unstable; urgency=medium
+
+  * Add missing setuptools dependency
+
+ -- Maud Spierings <maudspierings@gocontroll>  Thu, 10 Apr 2025 16:02:03 +0200
+
 moduline-webui (1.2.1) unstable; urgency=medium
 
   * Sort list of Simulink parameters
