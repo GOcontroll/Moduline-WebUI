@@ -1,5 +1,4 @@
 import json
-import os
 import subprocess
 
 import netifaces as ni
@@ -7,14 +6,25 @@ from microdot import Request
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
-from ModulineWebUI.handlers.service import get_service, set_service
 
 
 @app.get("/api/get_wifi")
 @with_session
 @auth
 async def get_wifi(req: Request, session: Session):
-    return json.dumps({"state": get_service("go-wifi")})
+    try:
+        out = subprocess.run(
+            ["rfkill", "-J", "--output-all"], check=True, capture_output=True
+        )
+        info = json.loads(out.stdout.decode("utf-8"))
+        for device in info["rfkilldevices"]:
+            if device["type"] == "wlan":
+                if device["soft"] == "unblocked" and device["hard"] == "unblocked":
+                    return json.dumps({"state": True})
+        else:
+            return json.dumps({"state": False})
+    except Exception as ex:
+        return json.dumps({"err": f"could get wifi state\n{ex}"})
 
 
 @app.post("/api/set_wifi")
@@ -26,11 +36,13 @@ async def set_wifi(req: Request, session: Session):
     state = req.json["new_state"]
     try:
         if state:
-            set_service("go-wifi", state)
+            subprocess.run(
+                ["nmcli", "r", "wifi", "on"], check=True, capture_output=True
+            )
         else:
-            # stopping wifi requires a little bit more effort
-            set_service("go-wifi", state)
-            subprocess.run(["/sbin/modprobe", "-r", "brcmfmac"]).check_returncode()
+            subprocess.run(
+                ["nmcli", "r", "wifi", "off"], check=True, capture_output=True
+            )
         return json.dumps({"state": state})
     except Exception as ex:
         return json.dumps({"err": f"could not switch state to {state}\n{ex}"})
@@ -327,7 +339,7 @@ async def connect_to_wifi_network(req: Request, session: Session):
     search_str = "Error:"
     idx = result.stdout.find(search_str)
     if idx >= 0:
-        return json.dumps({"err": f"{result.stdout[len(search_str):].strip()}"})
+        return json.dumps({"err": f"{result.stdout[len(search_str) :].strip()}"})
     return json.dumps({})
 
 

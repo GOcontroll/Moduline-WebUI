@@ -1,3 +1,9 @@
+moduline-webui (1.2.3) unstable; urgency=medium
+
+  * Switch wifi enable/disable to use rfkill
+
+ -- Maud Spierings <maudspierings@gocontroll>  Fri, 09 May 2025 10:05:05 +0200
+
 moduline-webui (1.2.2) unstable; urgency=medium
 
   * Add missing setuptools dependency
