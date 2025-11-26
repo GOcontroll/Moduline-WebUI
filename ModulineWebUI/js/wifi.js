@@ -53,7 +53,7 @@ async function set_ap_ssid() {
         result.innerText = "Error: " + response.err;
         return;
       }
-      result.setAttribute();
+      alert_class_switch(result, "ok");
       result.innerText = "Success!";
       input.value = "";
     } catch (err) {
