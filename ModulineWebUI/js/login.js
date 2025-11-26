@@ -1,11 +1,3 @@
-function alert_class_switch(elem, newClass) {
-  elem.classList.remove("ok", "info", "fail");
-  elem.classList.add(newClass, "fade-in");
-  setTimeout(() => {
-    elem.classList.remove("fade-in");
-  }, 500);
-}
-
 async function try_login(event) {
   event.preventDefault(); // Prevent the default form submission
   const passkey_field = document.getElementById("passkey");

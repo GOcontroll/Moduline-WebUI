@@ -1,15 +1,3 @@
-
-
-
-function alert_class_switch(elem, newClass) {
-  elem.classList.remove("ok", "info", "fail");
-  elem.classList.add(newClass, "fade-in");
-  setTimeout(() => {
-    elem.classList.remove("fade-in");
-  }, 500);
-}
-
-
 async function set_wifi() {
   //get what the next state of wifi should be
   let set_state = {};
