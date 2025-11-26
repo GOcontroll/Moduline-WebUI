@@ -86,14 +86,11 @@ async def get_hardware(req: Request, session: Session):
 @auth
 async def get_software(req: Request, session: Session):
     try:
-        with open("/version.txt", "r") as file:
-            return json.dumps({"version": file.readline().strip()})
-    except:
-        try:
-            with open("/root/version.txt", "r") as file:
-                return json.dumps({"version": file.readline().strip()})
-        except Exception as ex:
-            return json.dumps({"err": f"No version file found\n{ex}"})
+        res = subprocess.run(["uname", "-rs"], stdout=subprocess.PIPE, text=True)
+        res.check_returncode()
+        return json.dumps({"version": res.stdout.strip()})
+    except Exception as ex:
+        return json.dumps({"err": f"Could not get version\n{ex}"})
 
 
 @app.get("/api/get_serial_number")
