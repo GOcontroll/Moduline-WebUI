@@ -1,3 +1,12 @@
+moduline-webui (1.2.4) unstable; urgency=medium
+
+  * Fix set_ap_ssid() feedback
+  * Centralize alert_class_switch()
+  * Fetch kernel version for get_software()
+  * Better error checking in get_parameters()
+
+ -- Maud Spierings <maudspierings@gocontroll.com>  Wed, 26 Nov 2025 16:25:28 +0100
+
 moduline-webui (1.2.3) unstable; urgency=medium
 
   * Switch wifi enable/disable to use rfkill
