@@ -149,12 +149,15 @@ async def delete_errors(req: Request, session: Session):
 @with_session
 @auth
 async def get_parameters(req: Request, session: Session):
-    parameters = []
-    files = sorted(os.listdir("/etc/go-simulink"))
-    for file in files:
-        with open(f"/etc/go-simulink/{file}", "r") as par:
-            parameters.append({"name": file, "val": par.readline().strip()})
-    return json.dumps(parameters)
+    try:
+        parameters = []
+        files = sorted(os.listdir("/etc/go-simulink"))
+        for file in files:
+            with open(f"/etc/go-simulink/{file}", "r") as par:
+                parameters.append({"name": file, "val": par.readline().strip()})
+        return json.dumps(parameters)
+    except Exception as ex:
+        return json.dumps({"err": f"Could not get parameters\n{ex}"})
 
 
 @app.post("/api/save_parameters")
