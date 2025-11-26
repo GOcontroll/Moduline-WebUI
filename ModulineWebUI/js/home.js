@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', async function () {
   const sn_request = fetch("/api/get_serial_number");
   const software_request = fetch('/api/get_software');
