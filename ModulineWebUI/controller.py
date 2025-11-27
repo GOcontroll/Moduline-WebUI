@@ -6,6 +6,7 @@ from microdot import Request, send_file
 from microdot.session import Session, with_session
 
 from ModulineWebUI.app import app, auth
+import ModulineWebUI.diag as diag
 from ModulineWebUI.handlers.service import (
     get_service,
     get_service_blacklist,
@@ -114,15 +115,17 @@ async def get_serial_number(req: Request, session: Session):
 async def get_errors(req: Request, session: Session):
     # try to import a custom get_errors script
     try:
-        import modulinedtc.errors as errors
-
-        return json.dumps(errors.get_errors())
+        return json.dumps(diag.get_errors())
     # default route
     except:
         output = []
         try:
             files = os.listdir("/usr/mem-diag")
             for file in files:
+                try:
+                    int(file)
+                except ValueError:
+                    continue
                 output.append({"fc": file})
             return json.dumps(output)
         except Exception as ex:
