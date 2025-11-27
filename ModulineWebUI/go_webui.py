@@ -32,7 +32,7 @@ def parse_boolean(boolean: str) -> bool:
 def setup_logging():
     # Create a logger
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)  # Set the logging level
+    logger.setLevel(logging.WARNING)  # Set the logging level
 
     # Format for log messages
     formatter = logging.Formatter(
