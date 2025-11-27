@@ -7,7 +7,7 @@ long_description = (root / "README.md").read_text()
 
 setup(
     name="ModulineWebUI",
-    version="1.2.4",
+    version="1.3.0",
     description="A web UI to configure GOcontroll Moduline controllers",
     url="https://github.com/GOcontroll/Moduline-WebUI",
     license="MIT",
@@ -29,6 +29,7 @@ setup(
     entry_points={
         "console_scripts": [
             "go-webui = ModulineWebUI.__main__:execute_script",
+            "go-print-dtcs = ModulineWebUI.diag:print_errors",
         ]
     },
     python_requires=">=3.9",

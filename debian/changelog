@@ -1,3 +1,11 @@
+moduline-webui (1.3.0) unstable; urgency=medium
+
+  * Fault code display is now directly loaded from a json file instead of a
+    separate python module
+  * Set loglevel to WARNING for releases
+
+ -- Maud Spierings <maudspierings@gocontroll.com>  Thu, 27 Nov 2025 12:31:34 +0100
+
 moduline-webui (1.2.4) unstable; urgency=medium
 
   * Fix set_ap_ssid() feedback
